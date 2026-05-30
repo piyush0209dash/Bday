@@ -39,7 +39,7 @@
     transition: opacity 2s ease;
   }
 
-  /* Atmosphere (Dynamic Gradient) */
+  /* Atmosphere (Dynamic Translucent Gradient) */
   #atmosphere {
     position: fixed; inset: 0;
     z-index: -3;
@@ -59,29 +59,27 @@
     transition: opacity 2s ease;
   }
 
-  /* ── DYNAMIC TIME-OF-DAY STYLES ── */
+  /* ── DYNAMIC TIME-OF-DAY STYLES (Translucent) ── */
   
-  /* Morning */
-  body.morning { background-color: #fcd3a5; }
-  body.morning #atmosphere { background: linear-gradient(to bottom, #fcd3a5 0%, #f9a26c 40%, #ffecd2 100%); opacity: 0.9; }
-  body.morning #starmap, body.morning #warm-glow { opacity: 0; }
+  /* Morning: Gentle warm tint, very transparent */
+  body.morning { background-color: #030814; }
+  body.morning #atmosphere { background: linear-gradient(to bottom, rgba(252, 211, 165, 0.4) 0%, rgba(249, 162, 108, 0.3) 100%); }
+  body.morning #warm-glow { opacity: 0; }
 
-  /* Day */
-  body.day { background-color: #87ceeb; }
-  body.day #atmosphere { background: linear-gradient(to bottom, #87ceeb 0%, #b8e4f7 55%, #e0f4fc 100%); opacity: 0.95; }
-  body.day #starmap, body.day #warm-glow { opacity: 0; }
+  /* Day: Light blue tint, highly transparent so stars faintly show */
+  body.day { background-color: #030814; }
+  body.day #atmosphere { background: linear-gradient(to bottom, rgba(135, 206, 235, 0.4) 0%, rgba(224, 244, 252, 0.2) 100%); }
+  body.day #warm-glow { opacity: 0; }
 
-  /* Evening */
-  body.evening { background-color: #1a1a2e; }
-  body.evening #atmosphere { background: linear-gradient(to bottom, #1a1a2e 0%, #e05c2e 40%, #f5a623 80%, #ffecd2 100%); opacity: 0.85; }
-  body.evening #starmap { opacity: 0.4; }
-  body.evening #warm-glow { opacity: 0.6; }
+  /* Evening: Sunset tint */
+  body.evening { background-color: #030814; }
+  body.evening #atmosphere { background: linear-gradient(to bottom, rgba(26, 26, 46, 0.5) 0%, rgba(224, 92, 46, 0.3) 100%); }
+  body.evening #warm-glow { opacity: 0.4; }
 
-  /* Night */
+  /* Night: Almost entirely transparent, just a faint dark blue vignette */
   body.night { background-color: #030814; }
-  body.night #atmosphere { background: linear-gradient(to bottom, rgba(3, 8, 20, 0.4) 0%, rgba(12, 28, 64, 0.6) 60%, rgba(26, 26, 46, 0.9) 100%); opacity: 1; }
-  body.night #starmap { opacity: 0.85; }
-  body.night #warm-glow { opacity: 1; }
+  body.night #atmosphere { background: linear-gradient(to bottom, rgba(3, 8, 20, 0.1) 0%, rgba(12, 28, 64, 0.3) 100%); }
+  body.night #warm-glow { opacity: 0.8; }
 
   /* Sun & Moon */
   #moon {
@@ -111,7 +109,7 @@
     position: fixed;
     bottom: 0; left: 0;
     width: 100%;
-    height: 45vh; /* Adjust this to make the photo taller or shorter */
+    height: 45vh; 
     z-index: -1;
     pointer-events: none;
     display: flex;
@@ -119,34 +117,24 @@
     justify-content: center;
   }
   
-    #landscape-img {
+  #landscape-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: bottom center;
-    /* Removed the 2-second filter transition that crashes mobile browsers */
   }
 
   /* Simplified Mobile-Safe Photo Lighting */
-  body.morning #landscape-img { 
-    filter: brightness(0.7) sepia(0.3); 
-  }
-  body.day #landscape-img { 
-    filter: none; /* Normal photo during the day */
-  }
-  body.evening #landscape-img { 
-    filter: brightness(0.5); /* Just making it darker so the browser doesn't crash */
-  }
-  body.night #landscape-img { 
-    filter: brightness(0.2) drop-shadow(0 -5px 15px rgba(0,0,0,0.5)); 
-  }
-
+  body.morning #landscape-img { filter: brightness(0.7) sepia(0.3); }
+  body.day #landscape-img { filter: none; }
+  body.evening #landscape-img { filter: brightness(0.5); }
+  body.night #landscape-img { filter: brightness(0.2) drop-shadow(0 -5px 15px rgba(0,0,0,0.5)); }
 
   /* ── SPEECH BUBBLE UI (Dynamic Light/Dark) ── */
   #ui-container {
     position: fixed;
     z-index: 10;
-    top: 35%; /* Moved up slightly to accommodate the photo */
+    top: 25%; /* Raised higher to prevent blocking the photo */
     left: 50%;
     transform: translate(-50%, -50%);
     width: min(480px, 92vw);
@@ -294,7 +282,6 @@
 </head>
 <body>
 
-<!-- The Live Sky Map -->
 <iframe id="starmap"
   src="https://virtualsky.lco.global/embed/index.html?longitude=85.62&latitude=20.18&projection=polar&showdate=false&showbuttons=false&live=true&background=000000&fontsize=12&gridlines_az=false&starcolor=ffffff"
   allowfullscreen>
@@ -306,12 +293,10 @@
 <div id="sun"></div>
 <div id="moon"></div>
 
-<!-- Your Real Photo Container -->
 <div id="landscape-container">
   <img src="besties.png" alt="Besties" id="landscape-img">
 </div>
 
-<!-- The Speech Bubble UI -->
 <div id="ui-container">
   
   <div id="state-countdown">
