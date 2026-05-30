@@ -119,27 +119,28 @@
     justify-content: center;
   }
   
-  #landscape-img {
+    #landscape-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: bottom center;
-    transition: filter 2s ease;
+    /* Removed the 2-second filter transition that crashes mobile browsers */
   }
 
-  /* Dynamic Photo Lighting based on Time of Day */
+  /* Simplified Mobile-Safe Photo Lighting */
   body.morning #landscape-img { 
-    filter: brightness(0.65) sepia(0.4) hue-rotate(-15deg) contrast(1.1); 
+    filter: brightness(0.7) sepia(0.3); 
   }
   body.day #landscape-img { 
-    filter: brightness(0.95) contrast(1.05); 
+    filter: none; /* Normal photo during the day */
   }
   body.evening #landscape-img { 
-    filter: brightness(0.45) sepia(0.5) hue-rotate(-25deg) contrast(1.2); 
+    filter: brightness(0.5); /* Just making it darker so the browser doesn't crash */
   }
   body.night #landscape-img { 
-    filter: brightness(0.15) contrast(1.3) drop-shadow(0 -10px 30px rgba(0,0,0,0.8)); 
+    filter: brightness(0.2) drop-shadow(0 -5px 15px rgba(0,0,0,0.5)); 
   }
+
 
   /* ── SPEECH BUBBLE UI (Dynamic Light/Dark) ── */
   #ui-container {
