@@ -29,7 +29,7 @@
 
   /* ── ENVIRONMENT LAYERS ── */
   
-  /* Star Map Background */
+  /* Stellarium Background */
   #starmap {
     position: fixed; inset: 0;
     z-index: -4;
@@ -134,7 +134,7 @@
   #ui-container {
     position: fixed;
     z-index: 10;
-    top: 25%; /* Raised higher to prevent blocking the photo */
+    top: 25%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: min(480px, 92vw);
@@ -282,8 +282,10 @@
 </head>
 <body>
 
+<!-- The Live Sky Map (Now using Stellarium Web) -->
 <iframe id="starmap"
-  src="https://virtualsky.lco.global/embed/index.html?longitude=85.62&latitude=20.18&projection=polar&showdate=false&showbuttons=false&live=true&background=000000&fontsize=12&gridlines_az=false&starcolor=ffffff"
+  src="https://stellarium-web.org/"
+  allow="geolocation"
   allowfullscreen>
 </iframe>
 
@@ -293,10 +295,12 @@
 <div id="sun"></div>
 <div id="moon"></div>
 
+<!-- Your Real Photo Container -->
 <div id="landscape-container">
   <img src="besties.png" alt="Besties" id="landscape-img">
 </div>
 
+<!-- The Speech Bubble UI -->
 <div id="ui-container">
   
   <div id="state-countdown">
