@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Princess Tanya 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ui-bg: rgba(255,255,255,0.18);
+      --ui-border: rgba(255,255,255,0.35);
+      --ui-text: #fff;
+      --ui-subtext: rgba(255,255,255,0.82);
+      --ui-shadow: 0 8px 48px rgba(0,0,0,0.18);
+      --ui-accent: #ffb347;
+      --ui-tail-bg: rgba(255,255,255,0.18);
+    }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background-color: #030814;
+    }
+
+    /* 3D WebGL Background Canvas */
+    #bg-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh; z-index: -4;
+    }
+
+    #atmosphere {
+      position: fixed; inset: 0; z-index: -3; pointer-events: none;
+      transition: background 2s ease;
+    }
+
+    #warm-glow {
+      position: fixed; bottom: -10vh; left: 50%; transform: translateX(-50%); 
+      width: 120vw; height: 60vh;
+      background: radial-gradient(ellipse at bottom, rgba(255, 110, 0, 0.4) 0%, rgba(200, 50, 0, 0.15) 40%, transparent 70%);
+      z-index: -2; pointer-events: none; transition: opacity 2s ease;
+    }
+
+    body.morning #atmosphere { background: linear-gradient(to bottom, rgba(252, 211, 165, 0.4) 0%, rgba(249, 162, 108, 0.3) 100%); }
+    body.morning #warm-glow { opacity: 0; }
+    body.day #atmosphere { background: linear-gradient(to bottom, rgba(135, 206, 235, 0.4) 0%, rgba(224, 244, 252, 0.2) 100%); }
+    body.day #warm-glow { opacity: 0; }
+    body.evening #atmosphere { background: linear-gradient(to bottom, rgba(26, 26, 46, 0.5) 0%, rgba(224, 92, 46, 0.3) 100%); }
+    body.evening #warm-glow { opacity: 0.4; }
+    body.night #atmosphere { background: linear-gradient(to bottom, rgba(3, 8, 20, 0.1) 0%, rgba(12, 28, 64, 0.3) 100%); }
+    body.night #warm-glow { opacity: 0.8; }
+
+    #landscape-container {
+      position: fixed; bottom: 0; left: 0; width: 100%; height: 45vh; 
+      z-index: -1; pointer-events: none; display: flex; align-items: flex-end; justify-content: center;
+    }
+
+    #landscape-img { width: 100%; height: 100%; object-fit: cover; object-position: bottom center; }
+    body.morning #landscape-img { filter: brightness(0.7) sepia(0.3); }
+    body.day #landscape-img { filter: none; }
+    body.evening #landscape-img { filter: brightness(0.5); }
+    body.night #landscape-img { filter: brightness(0.2) drop-shadow(0 -5px 15px rgba(0,0,0,0.5)); }
+
+    #ui-container {
+      position: fixed; z-index: 10; top: 25%; left: 50%; transform: translate(-50%, -50%); 
+      width: min(480px, 92vw); background: var(--ui-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--ui-border); border-radius: 26px; padding: 38px; box-shadow: var(--ui-shadow); color: var(--ui-text);
+    }
+    #ui-container::after {
+      content: ''; position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+      border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 22px solid var(--ui-tail-bg);
+    }
+
+    body.night #ui-container, body.evening #ui-container {
+      --ui-bg: rgba(10, 15, 35, 0.65); --ui-border: rgba(255, 255, 255, 0.15);
+      --ui-tail-bg: rgba(10, 15, 35, 0.65); --ui-text: #fff; --ui-subtext: rgba(255, 255, 255, 0.82); --ui-accent: #ff8c00;
+    }
+    body.morning #ui-container, body.day #ui-container {
+      --ui-bg: rgba(255,255,255,0.45); --ui-border: rgba(255,255,255,0.7);
+      --ui-tail-bg: rgba(255,255,255,0.45); --ui-text: #1a1a2e; --ui-subtext: rgba(30,30,60,0.8); --ui-accent: #e05c2e;
+    }
+
+    .pre-label { font-size: 0.78rem; text-transform: uppercase; color: var(--ui-subtext); margin-bottom: 10px; text-align: center; }
+    .countdown-title { font-family: 'Pacifico', cursive; font-size: clamp(1.6rem, 5vw, 2.2rem); margin-bottom: 28px; text-align: center; }
+    .countdown-title span { color: var(--ui-accent); }
+    .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .timer-unit { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 14px 8px; text-align: center; }
+    body.morning .timer-unit, body.day .timer-unit { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
+    .timer-num { font-family: 'Pacifico', cursive; font-size: clamp(1.6rem, 5vw, 2.2rem); display: block; }
+    .timer-label { font-size: 0.62rem; text-transform: uppercase; color: var(--ui-subtext); display: block; margin-top: 5px; }
+    .countdown-note { font-size: 0.85rem; color: var(--ui-subtext); text-align: center; }
+    
+    .celebration-header { font-family: 'Pacifico', cursive; font-size: clamp(1.8rem, 6vw, 2.8rem); margin-bottom: 18px; text-align: center; }
+    .message-box { font-size: clamp(0.95rem, 2.5vw, 1.1rem); min-height: 80px; margin-bottom: 26px; text-align: center; color: var(--ui-subtext); }
+    .cursor { display: inline-block; width: 2px; height: 1.1em; background: var(--ui-accent); margin-left: 2px; animation: blink 0.9s step-end infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    .cta-btn { display: block; width: 100%; padding: 14px; background: var(--ui-accent); color: #fff; font-weight: 700; border: none; border-radius: 50px; cursor: pointer; text-align: center; }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  
+  <canvas id="bg-canvas"></canvas>
+  <div id="atmosphere"></div>
+  <div id="warm-glow"></div>
+
+  <div id="landscape-container">
+    <img src="besties.png" alt="Besties" id="landscape-img">
+  </div>
+
+  <div id="ui-container">
+    <div id="state-countdown">
+      <p class="pre-label">✦ A special day is coming ✦</p>
+      <h1 class="countdown-title">Counting down to<br><span>June 12th 🎂</span></h1>
+      <div class="timer-grid">
+        <div class="timer-unit"><span class="timer-num" id="cd-days">--</span><span class="timer-label">Days</span></div>
+        <div class="timer-unit"><span class="timer-num" id="cd-hours">--</span><span class="timer-label">Hours</span></div>
+        <div class="timer-unit"><span class="timer-num" id="cd-mins">--</span><span class="timer-label">Mins</span></div>
+        <div class="timer-unit"><span class="timer-num" id="cd-secs">--</span><span class="timer-label">Secs</span></div>
+      </div>
+      <p class="countdown-note">Something wonderful is being prepared for you ✨</p>
+    </div>
+
+    <div id="state-celebration" style="display: none;">
+      <h1 class="celebration-header">Happy Birthday! 🎉</h1>
+      <div class="message-box" id="message-box">
+        <span id="typed-text"></span><span class="cursor" id="cursor"></span>
+      </div>
+      <button class="cta-btn" id="confetti-btn">🎊 Celebrate!</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. THREE.JS 3D STARFIELD ENGINE
+    const canvas = document.querySelector('#bg-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 1;
+
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 3000;
+    const starArray = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount * 3; i++) {
+      starArray[i] = (Math.random() - 0.5) * 200; 
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starArray, 3));
+
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff, size: 0.15, transparent: true, opacity: 0.8
+    });
+    const starMesh = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starMesh);
+
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      starMesh.rotation.y += 0.0002;
+      starMesh.rotation.x += 0.0001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 2. ENVIRONMENT LIGHTING
+    function setEnvironmentLighting() {
+      const h = new Date().getHours();
+      const body = document.body;
+      body.classList.remove('morning','day','evening','night');
+      if (h >= 5 && h < 8) body.classList.add('morning');
+      else if (h >= 8 && h < 17) body.classList.add('day');
+      else if (h >= 17 && h < 20) body.classList.add('evening');
+      else body.classList.add('night');
+    }
+    setEnvironmentLighting();
+
+    // 3. BIRTHDAY LOGIC & TIMER
+    const TARGET = new Date('2026-06-12T00:00:00+05:30').getTime();
+
+    function getBirthdayMessage() {
+      const h = new Date().getHours();
+      if (h >= 0 && h < 5) return "Tu soi nahi hai abhi tak 🤨 apne tabiyat ka to khayal rakha kar, btw Happy Birthday Princess Tanya!";
+      if (h >= 5 && h < 11) return "uth gai🤔! Well good morning then Princess Tanya and happy birthday🎉!";
+      return "Wishing you a truly magical day filled with joy, laughter, and your favorite things. Happy Birthday Princess Tanya! 🎂✨";
+    }
+
+    function typeWriter(text, el, cursorEl, i = 0) {
+      if (i <= text.length) {
+        el.innerHTML = text.substring(0, i).replace(/\n/g, '<br>');
+        setTimeout(() => typeWriter(text, el, cursorEl, i + 1), 45);
+      } else {
+        if (cursorEl) cursorEl.style.display = 'none';
+      }
+    }
+
+    function fireConfetti() {
+      const opts = { startVelocity: 45, spread: 100, ticks: 80, zIndex: 999 };
+      confetti({ ...opts, particleCount: 100, origin: { x: 0.2, y: 1 } });
+      confetti({ ...opts, particleCount: 80, origin: { x: 0.5, y: 1 }, spread: 140, startVelocity: 55 });
+      confetti({ ...opts, particleCount: 100, origin: { x: 0.8, y: 1 } });
+    }
+
+    document.getElementById('confetti-btn').addEventListener('click', fireConfetti);
+
+    function mountCelebration() {
+      document.getElementById('state-countdown').style.display = 'none';
+      document.getElementById('state-celebration').style.display = 'block';
+      typeWriter(getBirthdayMessage(), document.getElementById('typed-text'), document.getElementById('cursor'));
+      setTimeout(fireConfetti, 500);
+    }
+
+    function startCountdown() {
+      const now = Date.now();
+      if (now >= TARGET) {
+        mountCelebration();
+        return;
+      }
+      let timer = setInterval(() => {
+        const delta = TARGET - Date.now();
+        if (delta <= 0) {
+          clearInterval(timer);
+          mountCelebration();
+          return;
+        }
+        document.getElementById('cd-days').innerText = String(Math.floor(delta / 86400000)).padStart(2, '0');
+        document.getElementById('cd-hours').innerText = String(Math.floor((delta % 86400000) / 3600000)).padStart(2, '0');
+        document.getElementById('cd-mins').innerText = String(Math.floor((delta % 3600000) / 60000)).padStart(2, '0');
+        document.getElementById('cd-secs').innerText = String(Math.floor((delta % 60000) / 1000)).padStart(2, '0');
+      }, 1000);
+    }
+    startCountdown();
+  </script>
+</body>
+</html>
