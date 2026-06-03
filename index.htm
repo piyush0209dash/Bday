@@ -1,91 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>For Princess Tanya 👑</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinzel',serif}
-#canvas{position:fixed;inset:0;display:block}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>For Princess Tanya 👑</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinzel',serif;touch-action:pan-x pan-y pinch-zoom}
+    #canvas{position:fixed;inset:0;display:block}
 
-/* LOADING */
-#loading{position:fixed;inset:0;background:#08050a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 1.5s ease}
-#loading .logo{font-size:3.5rem;animation:pulse 2s ease-in-out infinite}
-#loading h1{color:#e8c060;font-family:'Cinzel Decorative',serif;font-size:1.4rem;margin:.8rem 0 .4rem;letter-spacing:4px}
-#loading p{color:#8a7a5a;font-size:.65rem;letter-spacing:3px}
-#progress-bar{width:200px;height:2px;background:rgba(255,255,255,.1);margin-top:1.5rem;border-radius:2px;overflow:hidden}
-#progress-fill{height:100%;width:0;background:linear-gradient(90deg,#e8c060,#fff7d0);transition:width .3s ease;border-radius:2px}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    #loading{position:fixed;inset:0;background:#08050a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 1.5s ease}
+    #loading .logo{font-size:3.5rem;animation:pulse 2s ease-in-out infinite}
+    #loading h1{color:#e8c060;font-family:'Cinzel Decorative',serif;font-size:1.4rem;margin:.8rem 0 .4rem;letter-spacing:4px}
+    #loading p{color:#8a7a5a;font-size:.65rem;letter-spacing:3px}
+    #progress-bar{width:200px;height:2px;background:rgba(255,255,255,.1);margin-top:1.5rem;border-radius:2px;overflow:hidden}
+    #progress-fill{height:100%;width:0;background:linear-gradient(90deg,#e8c060,#fff7d0);transition:width .3s ease;border-radius:2px}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-/* HUD */
-#hud{position:fixed;inset:0;pointer-events:none;z-index:100}
-#hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(232,192,96,.5);font-size:.6rem;letter-spacing:3px;animation:breathe 3s ease-in-out infinite;pointer-events:none}
-@keyframes breathe{0%,100%{opacity:.3}50%{opacity:.8}}
+    #hud{position:fixed;inset:0;pointer-events:none;z-index:100}
+    #hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(232,192,96,.5);font-size:.6rem;letter-spacing:3px;animation:breathe 3s ease-in-out infinite;pointer-events:none;text-align:center}
+    @keyframes breathe{0%,100%{opacity:.3}50%{opacity:.8}}
 
-/* VIRTUAL JOYSTICK */
-#joystick-zone {
-  position: fixed; bottom: 30px; left: 30px;
-  width: 120px; height: 120px;
-  background: rgba(255,255,255,0.05);
-  border: 2px solid rgba(232,192,96,0.3);
-  border-radius: 50%; z-index: 500;
-  touch-action: none; display: none; pointer-events: all;
-}
-#joystick-knob {
-  position: absolute; top: 40px; left: 40px;
-  width: 40px; height: 40px;
-  background: rgba(232,192,96,0.6);
-  border-radius: 50%; box-shadow: 0 0 15px rgba(232,192,96,0.4);
-  pointer-events: none; transition: transform 0.1s;
-}
+    #joystick-zone {
+      position: fixed; bottom: 30px; left: 30px;
+      width: 120px; height: 120px;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(232,192,96,0.3);
+      border-radius: 50%; z-index: 500;
+      touch-action: none; display: none; pointer-events: all;
+    }
+    #joystick-knob {
+      position: absolute; top: 40px; left: 40px;
+      width: 40px; height: 40px;
+      background: rgba(232,192,96,0.6);
+      border-radius: 50%; box-shadow: 0 0 15px rgba(232,192,96,0.4);
+      pointer-events: none; transition: transform 0.1s;
+    }
 
-/* COUNTDOWN OVERLAY */
-#countdown-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:200;opacity:0;transition:opacity 1s ease}
-#countdown-overlay .big-days{font-family:'Cinzel Decorative',serif;font-size:4rem;color:#e8c060;text-shadow:0 0 40px rgba(232,192,96,.8);line-height:1}
-#countdown-overlay .days-word{font-size:.7rem;letter-spacing:5px;color:#c8a850;margin:.3rem 0 1rem}
-#countdown-overlay .time-row{display:flex;gap:20px;justify-content:center}
-#countdown-overlay .tu{text-align:center}
-#countdown-overlay .tu span{display:block;font-family:'Cinzel Decorative',serif;font-size:1.6rem;color:#f0d878}
-#countdown-overlay .tu small{font-size:.5rem;letter-spacing:2px;color:#8a7a5a}
-#cd-until{margin-top:.8rem;color:#7a6a4a;font-size:.55rem;letter-spacing:3px}
+    #countdown-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:200;opacity:0;transition:opacity 1s ease}
+    #countdown-overlay .big-days{font-family:'Cinzel Decorative',serif;font-size:4rem;color:#e8c060;text-shadow:0 0 40px rgba(232,192,96,.8);line-height:1}
+    #countdown-overlay .days-word{font-size:.7rem;letter-spacing:5px;color:#c8a850;margin:.3rem 0 1rem}
+    #countdown-overlay .time-row{display:flex;gap:20px;justify-content:center}
+    #countdown-overlay .tu{text-align:center}
+    #countdown-overlay .tu span{display:block;font-family:'Cinzel Decorative',serif;font-size:1.6rem;color:#f0d878}
+    #countdown-overlay .tu small{font-size:.5rem;letter-spacing:2px;color:#8a7a5a}
+    #cd-until{margin-top:.8rem;color:#7a6a4a;font-size:.55rem;letter-spacing:3px}
 
-/* BIRTHDAY UI */
-#birthday-ui{position:fixed;inset:0;pointer-events:none;z-index:200;display:none}
-#msg-container{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:0 20px 30px;pointer-events:all}
-#msg-panel{background:rgba(5,3,10,.82);backdrop-filter:blur(20px);border:1px solid rgba(232,192,96,.3);border-radius:20px;padding:28px 36px;max-width:680px;width:100%;text-align:center;box-shadow:0 -20px 60px rgba(232,192,96,.06);transform:translateY(100px);opacity:0;transition:all 1.5s cubic-bezier(.16,1,.3,1)}
-#msg-panel.visible{transform:translateY(0);opacity:1}
-.msg-crown{font-size:2rem;margin-bottom:.4rem}
-.msg-title{font-family:'Cinzel Decorative',serif;color:#e8c060;font-size:1.3rem;margin:.5rem 0;text-shadow:0 0 20px rgba(232,192,96,.4)}
-.msg-line{color:#e0d0b0;font-family:'Lato',sans-serif;font-weight:300;font-size:.95rem;line-height:1.8;margin:.3rem 0;opacity:0;transform:translateY(10px);transition:all .8s ease}
-.msg-line.show{opacity:1;transform:translateY(0)}
-.msg-hindi{color:#f0c878;font-family:'Lato',sans-serif;font-size:1rem;margin:.3rem 0;opacity:0;transform:translateY(10px);transition:all .8s ease}
-.msg-hindi.show{opacity:1;transform:translateY(0)}
-.msg-div{width:50px;height:1px;background:linear-gradient(90deg,transparent,#e8c060,transparent);margin:12px auto}
-.const-btn{margin-top:14px;padding:10px 28px;background:transparent;border:1px solid rgba(138,170,220,.6);color:#8aaad8;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:2px;border-radius:30px;cursor:pointer;transition:all .3s;pointer-events:all}
-.const-btn:hover{background:rgba(138,170,220,.1);border-color:#8aaad8}
+    #birthday-ui{position:fixed;inset:0;pointer-events:none;z-index:200;display:none}
+    #msg-container{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:0 20px 30px;pointer-events:all}
+    #msg-panel{background:rgba(5,3,10,.82);backdrop-filter:blur(20px);border:1px solid rgba(232,192,96,.3);border-radius:20px;padding:28px 36px;max-width:680px;width:100%;text-align:center;box-shadow:0 -20px 60px rgba(232,192,96,.06);transform:translateY(100px);opacity:0;transition:all 1.5s cubic-bezier(.16,1,.3,1)}
+    #msg-panel.visible{transform:translateY(0);opacity:1}
+    .msg-crown{font-size:2rem;margin-bottom:.4rem}
+    .msg-title{font-family:'Cinzel Decorative',serif;color:#e8c060;font-size:1.3rem;margin:.5rem 0;text-shadow:0 0 20px rgba(232,192,96,.4)}
+    .msg-line{color:#e0d0b0;font-family:'Lato',sans-serif;font-weight:300;font-size:.95rem;line-height:1.8;margin:.3rem 0;opacity:0;transform:translateY(10px);transition:all .8s ease}
+    .msg-line.show{opacity:1;transform:translateY(0)}
+    .msg-hindi{color:#f0c878;font-family:'Lato',sans-serif;font-size:1rem;margin:.3rem 0;opacity:0;transform:translateY(10px);transition:all .8s ease}
+    .msg-hindi.show{opacity:1;transform:translateY(0)}
+    .msg-div{width:50px;height:1px;background:linear-gradient(90deg,transparent,#e8c060,transparent);margin:12px auto}
+    .const-btn{margin-top:14px;padding:10px 28px;background:transparent;border:1px solid rgba(138,170,220,.6);color:#8aaad8;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:2px;border-radius:30px;cursor:pointer;transition:all .3s;pointer-events:all}
+    .const-btn:hover{background:rgba(138,170,220,.1);border-color:#8aaad8}
 
-/* CONSTELLATION PANEL */
-#const-panel{position:fixed;inset:0;background:rgba(2,5,15,.96);z-index:500;display:none;flex-direction:column;align-items:center;overflow-y:auto;padding:50px 20px 40px}
-#const-panel h2{font-family:'Cinzel Decorative',serif;color:#e8c060;font-size:1.5rem;text-align:center;margin-bottom:.4rem}
-#const-panel .sub{color:#6a8aaa;font-size:.75rem;letter-spacing:2px;margin-bottom:2rem;text-align:center}
-.c-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;width:100%;max-width:880px}
-.c-card{background:rgba(255,255,255,.03);border:1px solid rgba(80,120,180,.25);border-radius:16px;padding:20px;opacity:0;transform:translateY(20px);transition:all .6s ease}
-.c-card.show{opacity:1;transform:translateY(0)}
-.c-card canvas{display:block;margin:0 auto 12px;border-radius:8px}
-.c-name{color:#c0d0e8;font-family:'Cinzel',serif;font-size:.95rem;margin-bottom:6px;text-align:center}
-.c-desc{color:#7a8a9a;font-family:'Lato',sans-serif;font-weight:300;font-size:.8rem;line-height:1.6;text-align:center}
-.c-bless{color:#e8c060;font-size:.78rem;margin-top:8px;text-align:center;font-style:italic;font-family:'Lato',sans-serif}
-#close-const{margin-top:28px;padding:10px 32px;background:transparent;border:1px solid #e8c060;color:#e8c060;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:2px;border-radius:30px;cursor:pointer;transition:all .3s;flex-shrink:0}
-#close-const:hover{background:rgba(232,192,96,.1)}
+    #const-panel{position:fixed;inset:0;background:rgba(2,5,15,.96);z-index:500;display:none;flex-direction:column;align-items:center;overflow-y:auto;padding:50px 20px 40px}
+    #const-panel h2{font-family:'Cinzel Decorative',serif;color:#e8c060;font-size:1.5rem;text-align:center;margin-bottom:.4rem}
+    #const-panel .sub{color:#6a8aaa;font-size:.75rem;letter-spacing:2px;margin-bottom:2rem;text-align:center}
+    .c-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;width:100%;max-width:880px}
+    .c-card{background:rgba(255,255,255,.03);border:1px solid rgba(80,120,180,.25);border-radius:16px;padding:20px;opacity:0;transform:translateY(20px);transition:all .6s ease}
+    .c-card.show{opacity:1;transform:translateY(0)}
+    .c-card canvas{display:block;margin:0 auto 12px;border-radius:8px}
+    .c-name{color:#c0d0e8;font-family:'Cinzel',serif;font-size:.95rem;margin-bottom:6px;text-align:center}
+    .c-desc{color:#7a8a9a;font-family:'Lato',sans-serif;font-weight:300;font-size:.8rem;line-height:1.6;text-align:center}
+    .c-bless{color:#e8c060;font-size:.78rem;margin-top:8px;text-align:center;font-style:italic;font-family:'Lato',sans-serif}
+    #close-const{margin-top:28px;padding:10px 32px;background:transparent;border:1px solid #e8c060;color:#e8c060;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:2px;border-radius:30px;cursor:pointer;transition:all .3s;flex-shrink:0}
+    #close-const:hover{background:rgba(232,192,96,.1)}
 
-/* GATE FLASH */
-#flash{position:fixed;inset:0;background:rgba(255,230,150,0);pointer-events:none;z-index:999;transition:background .3s}
-</style>
+    #flash{position:fixed;inset:0;background:rgba(255,230,150,0);pointer-events:none;z-index:999;transition:background .3s}
+    
+    @media (max-width:600px) {
+      #joystick-zone { bottom: 20px; left: 20px; width: 100px; height: 100px; }
+      #joystick-knob { width: 34px; height: 34px; top: 33px; left: 33px; }
+      #msg-panel { padding: 20px 24px; }
+    }
+  </style>
 </head>
 <body>
-
 <canvas id="canvas"></canvas>
 <div id="flash"></div>
 
@@ -98,11 +96,7 @@ body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinze
 
 <div id="hud">
   <div id="hint">drag screen to look · use joystick to walk</div>
-  
-  <div id="joystick-zone">
-    <div id="joystick-knob"></div>
-  </div>
-
+  <div id="joystick-zone"><div id="joystick-knob"></div></div>
   <div id="countdown-overlay">
     <div class="big-days" id="cd-days">--</div>
     <div class="days-word">DAYS UNTIL YOUR KINGDOM AWAITS</div>
@@ -116,11 +110,7 @@ body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinze
 </div>
 
 <div id="birthday-ui">
-  <div id="msg-container">
-    <div id="msg-panel">
-      <div id="msg-content"></div>
-    </div>
-  </div>
+  <div id="msg-container"><div id="msg-panel"><div id="msg-content"></div></div></div>
 </div>
 
 <div id="const-panel">
@@ -132,996 +122,447 @@ body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinze
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ─── TIME UTILS ──────────────────────────────────────────────
-function getIST(){
-  const now=new Date();
-  return new Date(now.getTime()+now.getTimezoneOffset()*60000+5.5*3600000);
-}
-function isBirthday(t){return t.getMonth()===5&&t.getDate()===12}
-function timeWindow(t){
-  const h=t.getHours();
-  if(h>=0&&h<4)return'midnight';
-  if(h>=4&&h<10)return'morning';
-  return'day';
-}
-function countdown(){
-  const t=getIST();
-  let bd=new Date(t.getFullYear(),5,12);
-  if(t>=bd)bd=new Date(t.getFullYear()+1,5,12);
-  const d=bd-t;
-  return{
-    days:Math.floor(d/86400000),
-    h:Math.floor((d%86400000)/3600000),
-    m:Math.floor((d%3600000)/60000),
-    s:Math.floor((d%60000)/1000)
-  };
-}
-
-// ─── THREE.JS SETUP ──────────────────────────────────────────
-const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.0;
-
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,2000);
-
-// ─── SCENE STATE ─────────────────────────────────────────────
-let currentScene='hut'; // 'hut' | 'outdoor'
-let isGateOpening=false;
-let hutObjects=[];
-let outdoorObjects=[];
-
-// ─── CAMERA CONTROL & DRAGGING ───────────────────────────────
-const camState={yaw:0,pitch:0,targetYaw:0,targetPitch:0};
-let isDragging=false,lastX=0,lastY=0;
-
-document.addEventListener('mousedown',e=>{isDragging=true;lastX=e.clientX;lastY=e.clientY});
-document.addEventListener('mouseup',()=>isDragging=false);
-document.addEventListener('mousemove',e=>{
-  if(!isDragging)return;
-  camState.targetYaw-=(e.clientX-lastX)*0.003;
-  camState.targetPitch-=(e.clientY-lastY)*0.002;
-  camState.targetPitch=Math.max(-0.5,Math.min(0.5,camState.targetPitch));
-  lastX=e.clientX;lastY=e.clientY;
-});
-document.addEventListener('touchstart',e=>{
-  // Ignore touches on joystick zone so it doesn't rotate camera
-  if(e.target.closest('#joystick-zone')) return;
-  isDragging=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
-},{passive:true});
-document.addEventListener('touchend',()=>isDragging=false);
-document.addEventListener('touchmove',e=>{
-  if(!isDragging)return;
-  camState.targetYaw-=(e.touches[0].clientX-lastX)*0.004;
-  camState.targetPitch-=(e.touches[0].clientY-lastY)*0.003;
-  camState.targetPitch=Math.max(-0.5,Math.min(0.5,camState.targetPitch));
-  lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
-},{passive:true});
-
-window.addEventListener('resize',()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
-
-// ─── VIRTUAL JOYSTICK & WALKING ──────────────────────────────
-const joyZone = document.getElementById('joystick-zone');
-const joyKnob = document.getElementById('joystick-knob');
-let moveAxis = { x: 0, y: 0 };
-let joyActive = false;
-let joyCenter = { x: 0, y: 0 };
-
-joyZone.addEventListener('touchstart', (e) => {
-  joyActive = true;
-  const rect = joyZone.getBoundingClientRect();
-  joyCenter = { x: rect.left + 60, y: rect.top + 60 };
-  updateJoystick(e.touches[0]);
-}, { passive: false });
-
-joyZone.addEventListener('touchmove', (e) => {
-  if (!joyActive) return;
-  e.preventDefault(); // Stop screen scrolling
-  updateJoystick(e.touches[0]);
-}, { passive: false });
-
-joyZone.addEventListener('touchend', () => {
-  joyActive = false;
-  moveAxis = { x: 0, y: 0 };
-  joyKnob.style.transform = `translate(0px, 0px)`;
-});
-
-function updateJoystick(touch) {
-  let dx = touch.clientX - joyCenter.x;
-  let dy = touch.clientY - joyCenter.y;
-  const distance = Math.min(Math.hypot(dx, dy), 40); // Max drag 40px
-  const angle = Math.atan2(dy, dx);
-  
-  const knobX = Math.cos(angle) * distance;
-  const knobY = Math.sin(angle) * distance;
-  
-  joyKnob.style.transform = `translate(${knobX}px, ${knobY}px)`;
-  
-  moveAxis.x = knobX / 40; 
-  moveAxis.y = knobY / 40; 
-}
-
-// ─── HELPERS ────────────────────────────────────────────────
-function makeMat(color,roughness=0.85,metalness=0){
-  return new THREE.MeshStandardMaterial({color,roughness,metalness});
-}
-function box(w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
-  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
-  m.position.set(x,y,z);m.rotation.set(rx,ry,rz);
-  m.castShadow=true;m.receiveShadow=true;
-  return m;
-}
-function cyl(rt,rb,h,seg,mat,x,y,z){
-  const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);
-  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;
-  return m;
-}
-
-// ─── PARTICLE SYSTEM ────────────────────────────────────────
-function makeParticles(count,spread,color,size,y=0){
-  const geo=new THREE.BufferGeometry();
-  const pos=new Float32Array(count*3);
-  for(let i=0;i<count;i++){
-    pos[i*3]=(Math.random()-.5)*spread;
-    pos[i*3+1]=y+(Math.random()-.5)*spread*.3;
-    pos[i*3+2]=(Math.random()-.5)*spread;
-  }
-  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  const mat=new THREE.PointsMaterial({color,size,transparent:true,opacity:.8,sizeAttenuation:true});
-  return new THREE.Points(geo,mat);
-}
-
-// ─── HUT SCENE ───────────────────────────────────────────────
-function buildHut(){
-  const group=new THREE.Group();
-  const stoneMat=makeMat(0x4a3a2a,0.95);
-  const darkStoneMat=makeMat(0x2e2318,0.98);
-  const woodMat=makeMat(0x5a3010,0.9);
-  const darkWoodMat=makeMat(0x3a1a08,0.95);
-  const floorMat=makeMat(0x3a2e22,0.92);
-  const goldMat=new THREE.MeshStandardMaterial({color:0xc89030,roughness:0.3,metalness:0.8});
-
-  // Floor
-  const floor=box(30,0.2,30,floorMat,0,-1.5,0);
-  floor.receiveShadow=true;group.add(floor);
-
-  // Walls
-  const wallBack=box(30,10,0.4,stoneMat,0,3.5,-10);group.add(wallBack);
-  const wallLeft=box(0.4,10,30,stoneMat,-10,3.5,0);group.add(wallLeft);
-  const wallRight=box(0.4,10,30,stoneMat,10,3.5,0);group.add(wallRight);
-  // Ceiling
-  const ceiling=box(30,0.3,30,darkStoneMat,0,8.5,0);group.add(ceiling);
-
-  // Stone texture via repeating small boxes on walls
-  for(let i=0;i<20;i++){
-    const sb=box(.8,.3,.1,darkStoneMat,-8+i*.8+Math.random()*.1,Math.random()*8,-9.8);
-    group.add(sb);
-  }
-
-  // Floor stone tiles
-  for(let x=-6;x<=6;x+=2){
-    for(let z=-8;z<=4;z+=2){
-      const tile=box(1.9,0.05,1.9,x%4===0?stoneMat:darkStoneMat,x,-1.4,z);
-      group.add(tile);
+  (function() {
+    // ─── TIME UTILS ──────────────────────────────────────────────
+    function getIST(){
+      const now=new Date();
+      return new Date(now.getTime()+now.getTimezoneOffset()*60000+5.5*3600000);
     }
-  }
-
-  // Ceiling beams
-  for(let z=-8;z<=4;z+=3){
-    const beam=box(20,0.4,0.5,darkWoodMat,0,8.2,z);
-    group.add(beam);
-  }
-  // Longitudinal beams
-  for(let x=-8;x<=8;x+=4){
-    const beam=box(0.4,0.3,25,darkWoodMat,x,8,0);
-    group.add(beam);
-  }
-
-  // FIREPLACE (back wall center)
-  const fpBase=box(5,4,1,stoneMat,0,-0.5,-9.5);group.add(fpBase);
-  const fpL=box(1,5,1.5,stoneMat,-2.5,0,-9);group.add(fpL);
-  const fpR=box(1,5,1.5,stoneMat,2.5,0,-9);group.add(fpR);
-  const fpTop=box(6,.6,1.5,stoneMat,0,2.8,-9);group.add(fpTop);
-  const fpArch=box(4,2,1,darkStoneMat,0,0.5,-8.8);group.add(fpArch);
-  // Mantle
-  const mantle=box(7,.25,1.2,woodMat,0,3.15,-9);group.add(mantle);
-
-  // Candles on mantle
-  [-2,-0.5,1,2.5].forEach(x=>{
-    const cb=cyl(.06,.06,.4,8,makeMat(0xf5e6c8,.9),x,3.55,-9);group.add(cb);
-  });
-
-  // ─── TORCHES ────────────────────────────────────────────
-  const torchPositions=[[-8,3,-6],[-8,3,0],[-8,3,4],[8,3,-6],[8,3,0],[8,3,4],[0,3,-9.2]];
-  const torchLights=[];
-  torchPositions.forEach(([x,y,z])=>{
-    const stick=cyl(.05,.05,.6,6,woodMat,x,y-.1,z);group.add(stick);
-    const cup=cyl(.15,.08,.2,8,makeMat(0x8b4513,.8),x,y+.2,z);group.add(cup);
-    const fl=cyl(.12,0,.3,8,new THREE.MeshStandardMaterial({color:0xff8800,emissive:0xff6600,emissiveIntensity:3}),x,y+.4,z);
-    group.add(fl);
-    const light=new THREE.PointLight(0xff9944,2.5,8);
-    light.position.set(x,y+.5,z);
-    group.add(light);
-    torchLights.push({light,fl,baseIntensity:2.5,t:Math.random()*100});
-  });
-
-  // Fireplace glow
-  const fpLight=new THREE.PointLight(0xff6600,3,12);
-  fpLight.position.set(0,.5,-8);group.add(fpLight);
-  torchLights.push({light:fpLight,fl:null,baseIntensity:3,t:50});
-
-  // ─── BOOKSHELF ───────────────────────────────────────────
-  const shelfGroup=new THREE.Group();
-  shelfGroup.position.set(-9,0,-7);
-  const shelfBack=box(4,6,.1,darkWoodMat,0,2,-.8);shelfGroup.add(shelfBack);
-  const shelfSide1=box(.15,6,.8,woodMat,-2,2,-.4);shelfGroup.add(shelfSide1);
-  const shelfSide2=box(.15,6,.8,woodMat,2,2,-.4);shelfGroup.add(shelfSide2);
-  [0,1.5,3,4.5].forEach(y=>{
-    const shelf=box(4,.12,.8,woodMat,0,y-.3,-.4);shelfGroup.add(shelf);
-  });
-  const bookColors=[0x8b1a1a,0x1a4a8b,0x2a6a2a,0x6a4a1a,0x4a1a6a,0x6a2a2a,0x2a5a5a,0x8b6a1a];
-  for(let row=0;row<3;row++){
-    let bx=-1.6;
-    for(let b=0;b<7;b++){
-      const bw=.2+Math.random()*.15;
-      const bh=.6+Math.random()*.4;
-      const book=box(bw,bh,.6,makeMat(bookColors[b%bookColors.length],.9),bx+bw/2,row*1.5+bh/2,-.4);
-      shelfGroup.add(book);bx+=bw+.02;
+    function isBirthday(t){return t.getMonth()===5&&t.getDate()===12}
+    function timeWindow(t){
+      const h=t.getHours();
+      if(h>=0&&h<4)return'midnight';
+      if(h>=4&&h<10)return'morning';
+      return'day';
     }
-  }
-  group.add(shelfGroup);
+    function countdown(){
+      const t=getIST();
+      let bd=new Date(t.getFullYear(),5,12);
+      if(t>=bd)bd=new Date(t.getFullYear()+1,5,12);
+      const d=bd-t;
+      return{
+        days:Math.floor(d/86400000),
+        h:Math.floor((d%86400000)/3600000),
+        m:Math.floor((d%3600000)/60000),
+        s:Math.floor((d%60000)/1000)
+      };
+    }
 
-  // ─── WOODEN TABLE ────────────────────────────────────────
-  const tableGroup=new THREE.Group();tableGroup.position.set(-4,-1,0);
-  const tabletop=box(3.5,.15,1.8,woodMat,0,.8,0);tableGroup.add(tabletop);
-  [[-1.4,.0,-.7],[1.4,.0,-.7],[-1.4,.0,.7],[1.4,.0,.7]].forEach(([lx,ly,lz])=>{
-    tableGroup.add(box(.12,1.8,.12,darkWoodMat,lx,ly,lz));
-  });
-  // Potion bottles on table
-  [[-.8,.95,0],[0,.95,.1],[.7,.95,-.1]].forEach(([bx,by,bz],i)=>{
-    const colors=[0x4a0a6a,0x0a4a3a,0x4a3a0a];
-    const glows=[0xcc44ee,0x22ee88,0xeeee22];
-    const bottle=cyl(.08,.1,.35,8,new THREE.MeshStandardMaterial({color:colors[i],roughness:.1,transparent:true,opacity:.8}),bx,by,bz);
-    tableGroup.add(bottle);
-    const glow=new THREE.PointLight(glows[i],1,1.5);
-    glow.position.set(bx,by+.3,bz);tableGroup.add(glow);
-  });
-  group.add(tableGroup);
+    // ─── THREE.JS SETUP ──────────────────────────────────────────
+    const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.setSize(window.innerWidth,window.innerHeight);
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.0;
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,2000);
 
-  // ─── RUG ────────────────────────────────────────────────
-  const rugGeo=new THREE.PlaneGeometry(6,3);
-  const rugMat=new THREE.MeshStandardMaterial({color:0x8b2020,roughness:.95});
-  const rug=new THREE.Mesh(rugGeo,rugMat);
-  rug.rotation.x=-Math.PI/2;rug.position.set(0,-1.39,1);rug.receiveShadow=true;
-  group.add(rug);
+    let currentScene='hut';
+    let isGateOpening=false;
+    let hutData,outdoorData;
+    let hutObjects=[],outdoorObjects=[];
 
-  // ─── ARCHED WINDOW ──────────────────────────────────────
-  const winGroup=new THREE.Group();winGroup.position.set(9,4,-4);
-  const winFrame=box(.3,3.5,.3,darkWoodMat,0,0,0);winGroup.add(winFrame);
-  const winTop=new THREE.Mesh(new THREE.TorusGeometry(.7,.15,8,12,Math.PI),darkWoodMat.clone());
-  winTop.position.y=.85;winGroup.add(winTop);
-  const winPane=box(.05,2.8,1.4,new THREE.MeshStandardMaterial({color:0x0d1a3a,transparent:true,opacity:.6,roughness:.1}),-.2,-.2,0);
-  winGroup.add(winPane);
-  // Stars in window
-  for(let i=0;i<15;i++){
-    const sg=new THREE.Mesh(new THREE.SphereGeometry(.03,4,4),new THREE.MeshBasicMaterial({color:0xffffff}));
-    sg.position.set(-.1,(Math.random()-.5)*2,(Math.random()-.5)*1.2);
-    winGroup.add(sg);
-  }
-  group.add(winGroup);
+    const camState={yaw:0,pitch:0,targetYaw:0,targetPitch:0};
+    let isDragging=false,lastX=0,lastY=0;
 
-  // ─── WALL DECORATIONS ───────────────────────────────────
-  // Sword on wall
-  const swordGroup=new THREE.Group();swordGroup.position.set(7,5,-9.2);
-  const blade=box(.06,3,.04,new THREE.MeshStandardMaterial({color:0xc0c0c0,roughness:.1,metalness:.9}),0,0,0);swordGroup.add(blade);
-  const guard=box(.6,.12,.08,goldMat,0,-1.4,0);swordGroup.add(guard);
-  const handle=box(.08,.8,.08,woodMat,0,-1.9,0);swordGroup.add(handle);
-  group.add(swordGroup);
+    document.addEventListener('mousedown',e=>{isDragging=true;lastX=e.clientX;lastY=e.clientY});
+    document.addEventListener('mouseup',()=>isDragging=false);
+    document.addEventListener('mousemove',e=>{
+      if(!isDragging)return;
+      camState.targetYaw-=(e.clientX-lastX)*0.003;
+      camState.targetPitch-=(e.clientY-lastY)*0.002;
+      camState.targetPitch=Math.max(-0.5,Math.min(0.5,camState.targetPitch));
+      lastX=e.clientX;lastY=e.clientY;
+    });
+    document.addEventListener('touchstart',e=>{
+      if(e.target.closest('#joystick-zone')) return;
+      isDragging=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
+    },{passive:true});
+    document.addEventListener('touchend',()=>isDragging=false);
+    document.addEventListener('touchmove',e=>{
+      if(!isDragging)return;
+      camState.targetYaw-=(e.touches[0].clientX-lastX)*0.004;
+      camState.targetPitch-=(e.touches[0].clientY-lastY)*0.003;
+      camState.targetPitch=Math.max(-0.5,Math.min(0.5,camState.targetPitch));
+      lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
+    },{passive:true});
 
-  // Shield
-  const shieldGroup=new THREE.Group();shieldGroup.position.set(5.5,5,-9.2);
-  const shield=box(.08,1.8,1.4,makeMat(0x8b1a1a,.7),.0,0,0);shieldGroup.add(shield);
-  const shieldRim=box(.1,1.9,1.5,goldMat,-.05,0,0);shieldRim.scale.set(1,.98,.98);shieldGroup.add(shieldRim);
-  group.add(shieldGroup);
+    window.addEventListener('resize',()=>{
+      camera.aspect=window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth,window.innerHeight);
+    });
 
-  // ─── GATE (FRONT WALL) ───────────────────────────────────
-  const gateGroup=new THREE.Group();gateGroup.position.set(0,0,5);
+    const joyZone = document.getElementById('joystick-zone');
+    const joyKnob = document.getElementById('joystick-knob');
+    let moveAxis = { x: 0, y: 0 };
+    let joyActive = false, joyCenter = { x: 0, y: 0 };
 
-  // Gate arch frame
-  const archMat=makeMat(0x5a4030,.9);
-  const archL=box(.6,7,.6,archMat,-2,2,0);gateGroup.add(archL);
-  const archR=box(.6,7,.6,archMat,2,2,0);gateGroup.add(archR);
-  const archTop=box(4.6,.6,.6,archMat,0,5.7,0);gateGroup.add(archTop);
-  // Arch curve segments
-  for(let a=0;a<=Math.PI;a+=Math.PI/8){
-    const seg=box(.5,.5,.5,archMat,Math.cos(a)*2,5.3+Math.sin(a)*1.8,0);
-    gateGroup.add(seg);
-  }
+    joyZone.addEventListener('touchstart', (e) => {
+      joyActive = true;
+      const rect = joyZone.getBoundingClientRect();
+      joyCenter = { x: rect.left + rect.width/2, y: rect.top + rect.height/2 };
+      updateJoystick(e.touches[0]);
+    }, { passive: false });
+    joyZone.addEventListener('touchmove', (e) => {
+      if (!joyActive) return;
+      e.preventDefault();
+      updateJoystick(e.touches[0]);
+    }, { passive: false });
+    joyZone.addEventListener('touchend', () => {
+      joyActive = false;
+      moveAxis = { x: 0, y: 0 };
+      joyKnob.style.transform = `translate(0px, 0px)`;
+    });
 
-  // Door panels
-  const doorMat=new THREE.MeshStandardMaterial({color:0x4a2808,roughness:.9});
-  const doorL=box(1.9,6.8,.15,doorMat,-1,2.4,0);
-  doorL.userData={isDoor:'left',closed:true};
-  gateGroup.add(doorL);
-  const doorR=box(1.9,6.8,.15,doorMat,1,2.4,0);
-  doorR.userData={isDoor:'right',closed:true};
-  gateGroup.add(doorR);
+    function updateJoystick(touch) {
+      let dx = touch.clientX - joyCenter.x;
+      let dy = touch.clientY - joyCenter.y;
+      const maxDist = 40;
+      const dist = Math.min(Math.hypot(dx, dy), maxDist);
+      const angle = Math.atan2(dy, dx);
+      const knobX = Math.cos(angle) * dist;
+      const knobY = Math.sin(angle) * dist;
+      joyKnob.style.transform = `translate(${knobX}px, ${knobY}px)`;
+      moveAxis.x = knobX / maxDist;
+      moveAxis.y = knobY / maxDist;
+    }
 
-  // Door rings
-  const ringGeo=new THREE.TorusGeometry(.18,.04,8,16);
-  const ringMat=new THREE.MeshStandardMaterial({color:0xc89030,roughness:.2,metalness:.9});
-  const ringL=new THREE.Mesh(ringGeo,ringMat);ringL.position.set(-.6,2.4,.12);gateGroup.add(ringL);
-  const ringR=new THREE.Mesh(ringGeo,ringMat);ringR.position.set(.6,2.4,.12);gateGroup.add(ringR);
+    function makeMat(color,roughness=0.85,metalness=0){
+      return new THREE.MeshStandardMaterial({color,roughness,metalness});
+    }
+    function box(w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
+      const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+      m.position.set(x,y,z);m.rotation.set(rx,ry,rz);
+      m.castShadow=true;m.receiveShadow=true;
+      return m;
+    }
+    function cyl(rt,rb,h,seg,mat,x,y,z){
+      const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);
+      m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;
+      return m;
+    }
 
-  // Door planks detail
-  for(let y=-.5;y<3;y+=.8){
-    const plank=box(3.6,.12,.02,makeMat(0x3a1808,.95),0,y+2.4,.14);gateGroup.add(plank);
-  }
+    // ─── BUILD HUT (4 rooms: main hall, treasury, alchemy lab, kitchen) ──
+    function buildHut(){
+      const group=new THREE.Group();
+      const stoneMat=makeMat(0x4a3a2a,0.95);
+      const darkStoneMat=makeMat(0x2e2318,0.98);
+      const woodMat=makeMat(0x5a3010,0.9);
+      const darkWoodMat=makeMat(0x3a1a08,0.95);
+      const goldMat=new THREE.MeshStandardMaterial({color:0xc89030,roughness:0.3,metalness:0.8});
 
-  group.add(gateGroup);
+      const floor=box(24,0.2,24,makeMat(0x3a2e22,0.92),0,-1.5,0); group.add(floor);
+      group.add(box(24,8,0.4,stoneMat,0,2.5,-12));
+      group.add(box(24,8,0.4,stoneMat,0,2.5,12));
+      group.add(box(0.4,8,24,stoneMat,-12,2.5,0));
+      group.add(box(0.4,8,24,stoneMat,12,2.5,0));
+      group.add(box(24,0.3,24,darkStoneMat,0,6.5,0));
 
-  // Ambient + directional light for hut
-  const ambHut=new THREE.AmbientLight(0x2a1808,.8);group.add(ambHut);
+      for(let x=-10;x<=10;x+=2.5) for(let z=-10;z<=10;z+=2.5) group.add(box(2.3,0.05,2.3,Math.random()>0.5?stoneMat:darkStoneMat,x,-1.4,z));
 
-  scene.add(group);
-  hutObjects.push(group);
+      // Fireplace main hall
+      group.add(box(5,4,1,stoneMat,0,-0.5,-11.5));
+      group.add(box(1,5,1.5,stoneMat,-2.5,0,-11));
+      group.add(box(1,5,1.5,stoneMat,2.5,0,-11));
+      group.add(box(6,.6,1.5,stoneMat,0,2.8,-11));
+      const fpLight=new THREE.PointLight(0xff6600,3,12); fpLight.position.set(0,0.5,-10); group.add(fpLight);
 
-  return {group,torchLights,doorL,doorR,gateGroup};
-}
+      // Torches around
+      const torchPositions=[[-10,2,-8],[-10,2,0],[-10,2,8],[10,2,-8],[10,2,0],[10,2,8],[0,2,-11.5]];
+      const torchLights=[];
+      torchPositions.forEach(([x,y,z])=>{
+        group.add(cyl(.05,.05,.6,6,woodMat,x,y-.1,z));
+        group.add(cyl(.15,.08,.2,8,makeMat(0x8b4513,.8),x,y+.2,z));
+        const fl=cyl(.12,0,.3,8,new THREE.MeshStandardMaterial({color:0xff8800,emissive:0xff6600,emissiveIntensity:3}),x,y+.4,z);
+        group.add(fl);
+        const light=new THREE.PointLight(0xff9944,2.5,8); light.position.set(x,y+.5,z); group.add(light);
+        torchLights.push({light,fl,baseIntensity:2.5});
+      });
 
-// ─── OUTDOOR SCENE ──────────────────────────────────────────
-function buildOutdoor(){
-  const group=new THREE.Group();
-  const ist=getIST();
-  const hour=ist.getHours();
+      // ── ROOMS via partitions ──
+      // Treasury (back left)
+      const treasuryWall = box(0.3,5,6,stoneMat,-5,1,-6); group.add(treasuryWall);
+      group.add(box(1.5,1.2,1.2,goldMat,-8,-0.5,-9)); // treasure chest
+      // Alchemy lab (back right)
+      const labWall = box(0.3,5,6,stoneMat,5,1,-6); group.add(labWall);
+      const tableLab = box(2,0.15,1.5,woodMat,8,-0.5,-8); group.add(tableLab);
+      [0x4a0a6a,0x0a4a3a,0x4a3a0a].forEach((c,i)=>group.add(cyl(.08,.1,.35,8,new THREE.MeshStandardMaterial({color:c,roughness:.1,transparent:true,opacity:.8}),7.5+i*0.4,-0.3,-8)));
+      // Kitchen (front left)
+      const kitchenWall = box(0.3,4,5,stoneMat,-5,0.5,4); group.add(kitchenWall);
+      group.add(box(2.5,0.15,1.8,woodMat,-8,-0.7,6)); // table
+      group.add(cyl(.3,.3,.6,12,makeMat(0x3a3a3a),-9,-0.3,7)); // cauldron
 
-  // SKY COLOR
-  const skyColors={
-    night:[0x050a18,0x0d1a35],
-    dawn:[0x1a1040,0xe8702a],
-    morning:[0x4a90d9,0xc8e6f5],
-    noon:[0x1a6ab8,0x87ceeb],
-    afternoon:[0x2a5a9a,0xe8c870],
-    evening:[0x1a1040,0xf5a623],
-  };
-  function getSky(h){
-    if(h<4)return skyColors.night;
-    if(h<6)return skyColors.dawn;
-    if(h<10)return skyColors.morning;
-    if(h<14)return skyColors.noon;
-    if(h<18)return skyColors.afternoon;
-    if(h<20)return skyColors.evening;
-    return skyColors.night;
-  }
-  const [skyTop,skyBot]=getSky(hour);
+      // Bookshelf main hall
+      const shelfGroup=new THREE.Group(); shelfGroup.position.set(-10,0,-8);
+      shelfGroup.add(box(4,6,.1,darkWoodMat,0,2,-.8));
+      [0,1.5,3,4.5].forEach(y=>shelfGroup.add(box(4,.12,.8,woodMat,0,y-.3,-.4)));
+      group.add(shelfGroup);
 
-  // Sky sphere
-  const skySphere=new THREE.Mesh(
-    new THREE.SphereGeometry(900,32,32),
-    new THREE.MeshBasicMaterial({side:THREE.BackSide,
-      color:skyTop,
-      vertexColors:false
-    })
-  );
-  group.add(skySphere);
+      // Gate (front)
+      const gateGroup=new THREE.Group(); gateGroup.position.set(0,0,6);
+      const archMat=makeMat(0x5a4030,.9);
+      gateGroup.add(box(.6,7,.6,archMat,-2,2,0));
+      gateGroup.add(box(.6,7,.6,archMat,2,2,0));
+      gateGroup.add(box(4.6,.6,.6,archMat,0,5.7,0));
+      const doorMat=new THREE.MeshStandardMaterial({color:0x4a2808,roughness:.9});
+      const doorL=box(1.9,6.8,.15,doorMat,-1,2.4,0); doorL.userData={isDoor:'left',closed:true}; gateGroup.add(doorL);
+      const doorR=box(1.9,6.8,.15,doorMat,1,2.4,0); doorR.userData={isDoor:'right',closed:true}; gateGroup.add(doorR);
+      group.add(gateGroup);
 
-  // Sky gradient via fog
-  scene.background=new THREE.Color(skyTop);
-  scene.fog=new THREE.Fog(new THREE.Color(skyBot),200,900);
+      scene.add(group);
+      hutObjects.push(group);
+      return {group,torchLights,doorL,doorR,gateGroup};
+    }
 
-  // ─── GROUND ─────────────────────────────────────────────
-  const groundGeo=new THREE.PlaneGeometry(600,600,80,80);
-  const groundMat=new THREE.MeshStandardMaterial({color:0x3a6a1a,roughness:.95});
-  // Add some gentle undulation
-  const verts=groundGeo.attributes.position;
-  for(let i=0;i<verts.count;i++){
-    verts.setY(i,(Math.random()-.5)*.5);
-  }
-  groundGeo.computeVertexNormals();
-  const ground=new THREE.Mesh(groundGeo,groundMat);
-  ground.rotation.x=-Math.PI/2;ground.position.y=-2;
-  ground.receiveShadow=true;group.add(ground);
+    // ─── OUTDOOR SCENE (Khordha inspired) ───────────────────────
+    function buildOutdoor(){
+      const group=new THREE.Group();
+      const ist=getIST(); const hour=ist.getHours();
+      const isNight = hour<6||hour>=18;
+      scene.background=new THREE.Color(isNight?0x0a1220:0x87ceeb);
+      scene.fog=new THREE.Fog(isNight?0x0a1220:0x87ceeb,150,700);
 
-  // Grass tufts (instanced)
-  const grassGeo=new THREE.ConeGeometry(.05,.4,4);
-  const grassMat=new THREE.MeshStandardMaterial({color:0x4a8a20,roughness:1});
-  const grassCount=3000;
-  const dummy=new THREE.Object3D();
-  const grassMesh=new THREE.InstancedMesh(grassGeo,grassMat,grassCount);
-  for(let i=0;i<grassCount;i++){
-    const gx=(Math.random()-.5)*500,gz=-30+(Math.random())*(480);
-    dummy.position.set(gx,-1.8+Math.random()*.1,gz);
-    dummy.rotation.set(0,Math.random()*Math.PI*2,(Math.random()-.5)*.3);
-    dummy.updateMatrix();
-    grassMesh.setMatrixAt(i,dummy.matrix);
-  }
-  grassMesh.receiveShadow=true;group.add(grassMesh);
+      const groundGeo=new THREE.PlaneGeometry(500,500,60,60);
+      const groundMat=new THREE.MeshStandardMaterial({color:0x4a7a3a,roughness:0.95});
+      const ground=new THREE.Mesh(groundGeo,groundMat);
+      ground.rotation.x=-Math.PI/2; ground.position.y=-2; ground.receiveShadow=true; group.add(ground);
 
-  // ─── MOUNTAINS ──────────────────────────────────────────
-  function makeMountain(x,z,h,w,color){
-    const mg=new THREE.Group();
-    const geo=new THREE.ConeGeometry(w,h,7+Math.floor(Math.random()*5));
-    const vv=geo.attributes.position;
-    for(let i=0;i<vv.count;i++){
-      if(vv.getY(i)<h*.3){
-        vv.setX(i,vv.getX(i)*(1+(Math.random()-.5)*.4));
-        vv.setZ(i,vv.getZ(i)*(1+(Math.random()-.5)*.4));
+      // Mountains
+      function addMountain(x,z,h,w,col){
+        const geo=new THREE.ConeGeometry(w,h,8);
+        const mat=new THREE.MeshStandardMaterial({color:col,roughness:0.9});
+        const m=new THREE.Mesh(geo,mat); m.position.set(x,h/2-2,z); m.castShadow=true; group.add(m);
+      }
+      [[-180,300,70,50,0x6b7b8b],[0,320,85,60,0x5a6b7a],[180,290,65,45,0x6b7b8b],[-80,310,55,40,0x7a8b9b],[90,330,50,35,0x7a8b9b]].forEach(a=>addMountain(...a));
+
+      // Trees
+      for(let i=0;i<30;i++){
+        const tx=(Math.random()-0.5)*160, tz=20+Math.random()*100;
+        const trunk=cyl(.15,.2,1.6,6,makeMat(0x5a3010),tx,-1.2,tz); group.add(trunk);
+        [0.9,0.7,0.5].forEach((r,j)=>group.add(new THREE.Mesh(new THREE.ConeGeometry(r,1.5,6),makeMat(0x2a5a1a+(j*0x101010))).position.set(tx,0.4+j*1.2,tz)));
+      }
+
+      // Breeze & particles
+      const breezeGeo=new THREE.BufferGeometry(); const bp=new Float32Array(400*3);
+      for(let i=0;i<400;i++){ bp[i*3]=(Math.random()-0.5)*120; bp[i*3+1]=Math.random()*10; bp[i*3+2]=Math.random()*80; }
+      breezeGeo.setAttribute('position',new THREE.BufferAttribute(bp,3));
+      const breeze=new THREE.Points(breezeGeo,new THREE.PointsMaterial({color:0xd0e8f8,size:.15,transparent:true,opacity:.5}));
+      breeze.userData.isBreeze=true; group.add(breeze);
+
+      const amb=new THREE.AmbientLight(isNight?0x203050:0xfff5e0, isNight?0.5:1.0); group.add(amb);
+      const dir=new THREE.DirectionalLight(isNight?0x405070:0xfff0d0, isNight?0.4:1.2);
+      dir.position.set(100,120,50); dir.castShadow=true; group.add(dir);
+
+      scene.add(group); outdoorObjects.push(group);
+      return {group};
+    }
+
+    let lightningTimer=0;
+    const lightningLight=new THREE.PointLight(0xaabeff,0,400); lightningLight.position.set(0,200,100); scene.add(lightningLight);
+
+    // ─── INIT & LOADING ────────────────────────────────────────
+    let progress=0;
+    function fakeProgress(target,cb){
+      const iv=setInterval(()=>{
+        progress=Math.min(target,progress+2);
+        document.getElementById('progress-fill').style.width=progress+'%';
+        if(progress>=target){clearInterval(iv);cb&&cb();}
+      },20);
+    }
+
+    fakeProgress(40,()=>{
+      hutData=buildHut();
+      fakeProgress(80,()=>{
+        camera.position.set(0,1.5,4); camera.lookAt(0,1.5,-5);
+        fakeProgress(100,()=>{
+          setTimeout(()=>{
+            document.getElementById('loading').style.opacity='0';
+            setTimeout(()=>{
+              document.getElementById('loading').style.display='none';
+              onReady();
+            },1500);
+          },400);
+        });
+      });
+    });
+
+    function onReady(){
+      document.getElementById('joystick-zone').style.display='block';
+      const ist=getIST();
+      if(isBirthday(ist)){
+        document.getElementById('hint').textContent='your kingdom awaits...';
+        setTimeout(triggerGateOpen,2000);
+      } else {
+        document.getElementById('countdown-overlay').style.opacity='1';
+        updateCountdown(); setInterval(updateCountdown,1000);
       }
     }
-    geo.computeVertexNormals();
-    const mat=new THREE.MeshStandardMaterial({color,roughness:.95});
-    const peak=new THREE.Mesh(geo,mat);peak.castShadow=true;
-    peak.position.set(x,h/2-2,z);mg.add(peak);
-    // Snow cap
-    if(h>40){
-      const scap=new THREE.Mesh(new THREE.ConeGeometry(w*.25,h*.18,6),new THREE.MeshStandardMaterial({color:0xeeeeff,roughness:.7}));
-      scap.position.set(x,h-2,z);mg.add(scap);
+
+    function updateCountdown(){
+      const cd=countdown();
+      document.getElementById('cd-days').textContent=cd.days;
+      document.getElementById('cd-h').textContent=String(cd.h).padStart(2,'0');
+      document.getElementById('cd-m').textContent=String(cd.m).padStart(2,'0');
+      document.getElementById('cd-s').textContent=String(cd.s).padStart(2,'0');
     }
-    return mg;
-  }
 
-  // Far mountains (muted blue-grey)
-  [[-180,320,80,55,0x8aaab8],[0,350,95,70,0x6a8a9a],[180,310,70,50,0x8aaab8],
-   [-80,340,60,42,0x9ab0be],[90,360,55,38,0x9ab0be],[-250,330,65,45,0x8aaab8],[250,320,72,48,0x7a9aaa]
-  ].forEach(args=>group.add(makeMountain(...args)));
-
-  // Mid mountains (darker)
-  [[-120,250,55,38,0x6a8a7a],[60,230,45,32,0x5a7a8a],[-200,240,50,35,0x607080],[200,260,60,40,0x5a7080]
-  ].forEach(args=>group.add(makeMountain(...args)));
-
-  // Near mountains
-  [[-80,160,35,25,0x4a6a5a],[20,180,40,28,0x3a5a6a],[150,170,30,20,0x4a5a6a],[-160,165,38,26,0x405060]
-  ].forEach(args=>group.add(makeMountain(...args)));
-
-  // ─── TREES ──────────────────────────────────────────────
-  function makeTree(x,z){
-    const tg=new THREE.Group();
-    const trunk=cyl(.18,.22,1.4,7,makeMat(0x5a3010),x,-1.3,z);tg.add(trunk);
-    const f1=new THREE.Mesh(new THREE.ConeGeometry(1.2,2.5,7),makeMat(0x2a5a1a,.9));
-    f1.position.set(x,.8,z);tg.add(f1);
-    const f2=new THREE.Mesh(new THREE.ConeGeometry(1.0,2,7),makeMat(0x3a6a2a,.9));
-    f2.position.set(x,2,z);tg.add(f2);
-    const f3=new THREE.Mesh(new THREE.ConeGeometry(.7,1.5,7),makeMat(0x4a7a2a,.9));
-    f3.position.set(x,3,z);tg.add(f3);
-    return tg;
-  }
-  [[-30,30],[-25,45],[-40,60],[-35,80],[25,35],[30,55],[40,70],[-50,90],[50,90]].forEach(([x,z])=>group.add(makeTree(x,z)));
-
-  // ─── WILDFLOWERS ────────────────────────────────────────
-  const flowerColors=[0xff6b9d,0xffd700,0xff8c42,0xffffff,0xcc44ff];
-  for(let i=0;i<200;i++){
-    const fc=flowerColors[Math.floor(Math.random()*flowerColors.length)];
-    const stem=cyl(.015,.015,.2+Math.random()*.2,4,makeMat(0x4a8a20),(Math.random()-.5)*100,-1.8+Math.random()*.1,Math.random()*80+5);
-    group.add(stem);
-    const bloom=new THREE.Mesh(new THREE.SphereGeometry(.06+Math.random()*.06,6,6),new THREE.MeshStandardMaterial({color:fc,roughness:.6,emissive:fc,emissiveIntensity:.1}));
-    bloom.position.set(stem.position.x,-1.5+Math.random()*.2,stem.position.z);
-    group.add(bloom);
-  }
-
-  // ─── PATH ───────────────────────────────────────────────
-  const pathGeo=new THREE.PlaneGeometry(3,200);
-  const pathMat=new THREE.MeshStandardMaterial({color:0x8a6a40,roughness:.98});
-  const path=new THREE.Mesh(pathGeo,pathMat);
-  path.rotation.x=-Math.PI/2;path.position.set(0,-1.99,80);
-  path.receiveShadow=true;group.add(path);
-
-  // ─── STARS (night only) ─────────────────────────────────
-  if(hour<6||hour>=18){
-    const starsGeo=new THREE.BufferGeometry();
-    const sp=new Float32Array(2000*3);
-    for(let i=0;i<2000;i++){
-      const theta=Math.random()*Math.PI*2,phi=Math.acos(Math.random()*.9);
-      sp[i*3]=Math.sin(phi)*Math.cos(theta)*800;
-      sp[i*3+1]=Math.cos(phi)*800;
-      sp[i*3+2]=Math.sin(phi)*Math.sin(theta)*800;
+    function triggerGateOpen(){
+      if(isGateOpening)return; isGateOpening=true;
+      document.getElementById('countdown-overlay').style.opacity='0';
+      let t=0;
+      const anim=setInterval(()=>{ t+=.02; camera.position.z=4-t*3; if(t>=1){clearInterval(anim); openDoors();} },16);
     }
-    starsGeo.setAttribute('position',new THREE.BufferAttribute(sp,3));
-    const starsMat=new THREE.PointsMaterial({color:0xffffff,size:1.2,sizeAttenuation:true});
-    const stars=new THREE.Points(starsGeo,starsMat);
-    group.add(stars);
-  }
 
-  // ─── SUN / MOON ─────────────────────────────────────────
-  const isNight=hour<6||hour>=18;
-  const celestialGeo=new THREE.SphereGeometry(isNight?12:18,16,16);
-  const celestialMat=isNight
-    ? new THREE.MeshStandardMaterial({color:0xe8e8d0,emissive:0xc8c8a0,emissiveIntensity:.8,roughness:.9})
-    : new THREE.MeshStandardMaterial({color:0xfff5c8,emissive:0xffee88,emissiveIntensity:1.5,roughness:1});
-  const celestial=new THREE.Mesh(celestialGeo,celestialMat);
-  let t;
-  if(!isNight){t=(hour-6)/13;}else{t=hour>=18?(hour-18)/11:(hour+5)/11;}
-  celestial.position.set(-300+t*600,80+Math.sin(Math.PI*t)*250,(isNight?300:200));
-  group.add(celestial);
-
-  // Sun glow
-  if(!isNight){
-    const glowGeo=new THREE.SphereGeometry(30,16,16);
-    const glowMat=new THREE.MeshBasicMaterial({color:0xffee88,transparent:true,opacity:.15});
-    const glow=new THREE.Mesh(glowGeo,glowMat);glow.position.copy(celestial.position);group.add(glow);
-  }
-
-  // ─── LIGHTING ───────────────────────────────────────────
-  const ambColor=isNight?0x102030:(hour<10?0xffe8c8:0xffffff);
-  const ambIntensity=isNight?.4:(hour<10?.9:1.1);
-  const amb=new THREE.AmbientLight(ambColor,ambIntensity);group.add(amb);
-
-  const sun=new THREE.DirectionalLight(isNight?0x304060:0xfff0d0,isNight?.3:1.2);
-  sun.position.copy(celestial.position);
-  sun.castShadow=true;
-  sun.shadow.mapSize.set(2048,2048);
-  sun.shadow.camera.near=0.5;sun.shadow.camera.far=800;
-  sun.shadow.camera.left=-200;sun.shadow.camera.right=200;
-  sun.shadow.camera.top=200;sun.shadow.camera.bottom=-200;
-  group.add(sun);
-
-  // ─── WEATHER ────────────────────────────────────────────
-  // June Khordha = pre-monsoon, hot, storms possible late afternoon/night
-  const stormLikely=(hour>=14&&hour<19)||(hour>=0&&hour<4);
-  const doStorm=stormLikely&&Math.random()>.45;
-
-  if(doStorm){
-    // Rain particles
-    const rainGeo=new THREE.BufferGeometry();
-    const rp=new Float32Array(4000*3);
-    for(let i=0;i<4000;i++){
-      rp[i*3]=(Math.random()-.5)*200;
-      rp[i*3+1]=Math.random()*100;
-      rp[i*3+2]=(Math.random()-.5)*200;
+    function openDoors(){
+      const {doorL,doorR}=hutData; let angle=0;
+      const anim=setInterval(()=>{
+        angle+=.025; const a=Math.min(angle,Math.PI*.65);
+        doorL.rotation.y=a; doorR.rotation.y=-a;
+        doorL.position.x=-1-Math.sin(a)*1.9; doorR.position.x=1+Math.sin(a)*1.9;
+        if(angle>=Math.PI*.65){clearInterval(anim);
+          document.getElementById('flash').style.background='rgba(255,230,150,0.7)';
+          setTimeout(()=>document.getElementById('flash').style.background='',600);
+          setTimeout(transitionToOutdoor,1200);
+        }
+      },16);
     }
-    rainGeo.setAttribute('position',new THREE.BufferAttribute(rp,3));
-    const rainMat=new THREE.PointsMaterial({color:0xaabbd0,size:.3,transparent:true,opacity:.6});
-    const rain=new THREE.Points(rainGeo,rainMat);
-    rain.userData.isRain=true;
-    group.add(rain);
 
-    // Dark storm clouds
-    for(let i=0;i<12;i++){
-      const cg=new THREE.SphereGeometry(20+Math.random()*15,8,8);
-      const cm=new THREE.MeshStandardMaterial({color:0x303040,transparent:true,opacity:.7,roughness:1});
-      const cloud=new THREE.Mesh(cg,cm);
-      cloud.position.set((Math.random()-.5)*300,80+Math.random()*40,Math.random()*200-50);
-      cloud.scale.set(1+Math.random(),.4+Math.random()*.3,1+Math.random());
-      group.add(cloud);
-    }
-    group.userData.storm=true;
-  } else {
-    // Light fluffy clouds
-    for(let i=0;i<8;i++){
-      const cg=new THREE.SphereGeometry(15+Math.random()*10,8,8);
-      const cm=new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.85,roughness:1});
-      const cloud=new THREE.Mesh(cg,cm);
-      cloud.position.set((Math.random()-.5)*400,60+Math.random()*30,Math.random()*300-50);
-      cloud.scale.set(1.5+Math.random(),.35+Math.random()*.2,1+Math.random());
-      group.add(cloud);
-    }
-  }
-
-  // ─── BREEZE PARTICLES ────────────────────────────────────
-  const breezeGeo=new THREE.BufferGeometry();
-  const bp=new Float32Array(300*3);
-  const bv=new Float32Array(300*3);
-  for(let i=0;i<300;i++){
-    bp[i*3]=(Math.random()-.5)*100;
-    bp[i*3+1]=-1+Math.random()*12;
-    bp[i*3+2]=Math.random()*80;
-    bv[i*3]=.1+Math.random()*.3;bv[i*3+1]=0;bv[i*3+2]=0;
-  }
-  breezeGeo.setAttribute('position',new THREE.BufferAttribute(bp,3));
-  const breezeMat=new THREE.PointsMaterial({color:0xd0e8f8,size:.18,transparent:true,opacity:.45});
-  const breeze=new THREE.Points(breezeGeo,breezeMat);
-  breeze.userData.isBreeze=true;
-  group.add(breeze);
-
-  // ─── PETALS ─────────────────────────────────────────────
-  const petalColors=[0xff9eb5,0xffcce0,0xffd700];
-  const petalData=[];
-  for(let i=0;i<60;i++){
-    const pGeo=new THREE.PlaneGeometry(.15,.1);
-    const pMat=new THREE.MeshStandardMaterial({color:petalColors[i%3],side:THREE.DoubleSide,transparent:true,opacity:.8});
-    const petal=new THREE.Mesh(pGeo,pMat);
-    petal.position.set((Math.random()-.5)*80,2+Math.random()*8,Math.random()*40);
-    petal.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
-    petal.userData={vx:(Math.random()-.5)*.02,vy:-.005-Math.random()*.01,vz:(Math.random()-.5)*.02,spin:Math.random()*.05};
-    petalData.push(petal);
-    group.add(petal);
-  }
-  group.userData.petals=petalData;
-
-  scene.add(group);
-  outdoorObjects.push(group);
-  return {group};
-}
-
-// ─── LIGHTNING EFFECT ───────────────────────────────────────
-let lightningTimer=0;
-const lightningLight=new THREE.PointLight(0xaabeff,0,400);
-lightningLight.position.set(0,200,100);
-scene.add(lightningLight);
-
-// ─── MAIN BUILD ─────────────────────────────────────────────
-let hutData,outdoorData;
-let progress=0;
-
-function fakeProgress(target,cb){
-  const iv=setInterval(()=>{
-    progress=Math.min(target,progress+2);
-    document.getElementById('progress-fill').style.width=progress+'%';
-    if(progress>=target){clearInterval(iv);cb&&cb();}
-  },20);
-}
-
-// ─── INIT ────────────────────────────────────────────────────
-fakeProgress(40,()=>{
-  hutData=buildHut();
-  fakeProgress(80,()=>{
-    camera.position.set(0,1.5,4);
-    camera.lookAt(0,1.5,-5);
-    fakeProgress(100,()=>{
+    function transitionToOutdoor(){
+      renderer.domElement.style.transition='opacity 1.5s'; renderer.domElement.style.opacity='0';
       setTimeout(()=>{
-        const loading=document.getElementById('loading');
-        loading.style.opacity='0';
-        setTimeout(()=>{
-          loading.style.display='none';
-          onReady();
-        },1500);
-      },400);
-    });
-  });
-});
-
-function onReady(){
-  // Reveal the virtual joystick for exploring
-  document.getElementById('joystick-zone').style.display = 'block';
-
-  const ist=getIST();
-  if(isBirthday(ist)){
-    // Trigger gate opening after brief look around
-    document.getElementById('hint').textContent='your kingdom awaits...';
-    camState.targetYaw=0;camState.targetPitch=-.1;
-    setTimeout(triggerGateOpen,2000);
-  } else {
-    // Show countdown overlay
-    document.getElementById('countdown-overlay').style.opacity='1';
-    updateCountdown();
-    setInterval(updateCountdown,1000);
-    document.getElementById('hint').textContent='drag screen to look · use joystick to walk';
-  }
-}
-
-function updateCountdown(){
-  const cd=countdown();
-  document.getElementById('cd-days').textContent=cd.days;
-  document.getElementById('cd-h').textContent=String(cd.h).padStart(2,'0');
-  document.getElementById('cd-m').textContent=String(cd.m).padStart(2,'0');
-  document.getElementById('cd-s').textContent=String(cd.s).padStart(2,'0');
-}
-
-// ─── GATE OPEN SEQUENCE ─────────────────────────────────────
-function triggerGateOpen(){
-  if(isGateOpening)return;
-  isGateOpening=true;
-  document.getElementById('countdown-overlay').style.opacity='0';
-  document.getElementById('hint').textContent='';
-
-  // Animate camera toward gate
-  let t=0;
-  const camAnim=setInterval(()=>{
-    t+=.02;
-    camera.position.z=4-t*3;
-    if(t>=1){clearInterval(camAnim);openDoors();}
-  },16);
-}
-
-function openDoors(){
-  const {doorL,doorR}=hutData;
-  let angle=0;
-  const flash=document.getElementById('flash');
-
-  const doorAnim=setInterval(()=>{
-    angle+=.025;
-    doorL.rotation.y=Math.min(angle,Math.PI*.65);
-    doorR.rotation.y=-Math.min(angle,Math.PI*.65);
-    // Move pivot — shift door position as it opens
-    doorL.position.x=-1-(Math.sin(Math.min(angle,Math.PI*.65))*1.9);
-    doorR.position.x=1+(Math.sin(Math.min(angle,Math.PI*.65))*1.9);
-
-    if(angle>=Math.PI*.65){
-      clearInterval(doorAnim);
-      // Flash
-      flash.style.background='rgba(255,230,150,0.7)';
-      setTimeout(()=>flash.style.background='',600);
-      // Transition to outdoor
-      setTimeout(transitionToOutdoor,1200);
+        hutObjects.forEach(o=>o.visible=false); scene.fog=null;
+        outdoorData=buildOutdoor();
+        camera.position.set(0,1.5,-5); camera.lookAt(0,1.5,30);
+        camState.yaw=Math.PI; camState.targetYaw=Math.PI;
+        currentScene='outdoor'; renderer.domElement.style.opacity='1';
+        setTimeout(showBirthdayUI,2000);
+      },1500);
     }
-  },16);
-}
 
-function transitionToOutdoor(){
-  // Fade out
-  renderer.domElement.style.transition='opacity 1.5s ease';
-  renderer.domElement.style.opacity='0';
-  setTimeout(()=>{
-    // Hide hut, build outdoor
-    hutObjects.forEach(o=>{o.visible=false});
-    scene.fog=null;
-    outdoorData=buildOutdoor();
-    camera.position.set(0,1.5,-5);
-    camera.lookAt(0,1.5,50);
-    camState.yaw=Math.PI;camState.targetYaw=Math.PI;
-    currentScene='outdoor';
-    renderer.domElement.style.opacity='1';
-    document.getElementById('hint').textContent='drag screen to look · use joystick to walk';
-    // Show birthday UI
-    setTimeout(showBirthdayUI,2000);
-  },1500);
-}
-
-// ─── BIRTHDAY UI ────────────────────────────────────────────
-function showBirthdayUI(){
-  const ui=document.getElementById('birthday-ui');
-  ui.style.display='block';
-  setTimeout(()=>{
-    document.getElementById('msg-panel').classList.add('visible');
-    buildMessage();
-  },500);
-}
-
-function buildMessage(){
-  const ist=getIST();
-  const win=timeWindow(ist);
-  const content=document.getElementById('msg-content');
-  content.innerHTML='';
-
-  const lines=[];
-
-  if(win==='midnight'){
-    lines.push({cls:'msg-hindi big',text:'tu abhi tak soi nahi🤨??',delay:0});
-    lines.push({cls:'msg-hindi',text:'Apne tabyat ka to khayal rakh.',delay:.8});
-    lines.push({cls:'msg-title',text:'Happy Birthday, Princess Tanya 👑',delay:1.6});
-    lines.push({cls:'msg-div',delay:2.2});
-    lines.push({cls:'msg-hindi',text:'chal Tereko kuch mast bata ta hu ✨',delay:2.8});
-    lines.push({cls:'const-btn-line',delay:3.4});
-    lines.push({cls:'msg-div',delay:4});
-  } else if(win==='morning'){
-    lines.push({cls:'msg-hindi big',text:'tu uth gayi🤨??',delay:0});
-    lines.push({cls:'msg-title',text:'Happy Birthday, Princess Tanya 👑',delay:.8});
-    lines.push({cls:'msg-div',delay:1.5});
-    addCoreLines(lines,2);
-  } else {
-    lines.push({cls:'msg-crown',text:'👑',delay:0});
-    lines.push({cls:'msg-title big',text:'Happy Birthday',delay:.5});
-    lines.push({cls:'msg-title',text:'Princess Tanya 👑',delay:1.1});
-    lines.push({cls:'msg-div',delay:1.8});
-    addCoreLines(lines,2.2);
-  }
-
-  lines.forEach(({cls,text,delay})=>{
-    if(cls==='msg-div'){
-      const d=document.createElement('div');d.className='msg-div';content.appendChild(d);return;
+    function showBirthdayUI(){
+      document.getElementById('birthday-ui').style.display='block';
+      setTimeout(()=>{ document.getElementById('msg-panel').classList.add('visible'); buildMessage(); },500);
     }
-    if(cls==='const-btn-line'){
-      const btn=document.createElement('button');
-      btn.className='const-btn';btn.textContent='✦ Dekh Aasman Mein ✦';
-      btn.style.opacity='0';btn.style.transition=`opacity .8s ease ${delay}s`;
-      btn.onclick=showConstellations;content.appendChild(btn);
-      setTimeout(()=>btn.style.opacity='1',delay*1000+100);
-      return;
-    }
-    const el=document.createElement('div');
-    if(cls.includes('msg-crown'))el.className='msg-crown';
-    else if(cls.includes('msg-title'))el.className='msg-title';
-    else if(cls.includes('msg-hindi'))el.className='msg-hindi';
-    else el.className='msg-line';
-    if(text)el.textContent=text;
-    content.appendChild(el);
-    setTimeout(()=>el.classList.add('show'),delay*1000+100);
-  });
 
-  if(win==='midnight'){
-    // Core lines added after constellation
-  } else if(win!=='midnight'){
-    // already added
-  }
-}
-
-function addCoreLines(lines,baseDelay){
-  let d=baseDelay;
-  [
-    ['msg-line','On this beautiful day, the stars aligned just to see you smile.'],
-    ['msg-line','You carry warmth that makes every room feel like home, and a spirit that makes every adventure worth it.'],
-    ['msg-line','The world is genuinely brighter because you\'re in it, Tanya. 🌟'],
-    ['msg-hindi','Bas khush reh. Healthy reh. Aur princess wali vibes kabhi mat chhodna. 👑'],
-    ['msg-title','Happy Birthday, Princess. ✨'],
-  ].forEach(([cls,text])=>{lines.push({cls,text,delay:d});d+=.7;});
-}
-
-// ─── CONSTELLATIONS ─────────────────────────────────────────
-const CONSTS=[
-  {name:'Scorpius (Vrishchika)',color:'#ff6b6b',stars:[[50,20],[55,35],[60,50],[58,65],[50,75],[42,80],[35,75],[30,65],[40,55],[35,40]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[2,8],[8,9]],desc:'The Scorpion rises in the south — its heart, Antares, blazes as a red supergiant 700× the size of our Sun.',bless:'✦ The Scorpion\'s ancient fire burns as bright as your spirit.'},
-  {name:'Libra (Tula)',color:'#a8d8a8',stars:[[50,30],[35,50],[65,50],[40,70],[60,70]],lines:[[0,1],[0,2],[1,3],[2,4],[3,4]],desc:'The Scales of Balance shine high in the sky, representing harmony and justice — rare and precious qualities.',bless:'✦ May balance and grace be your crown this year.'},
-  {name:'Virgo (Kanya)',color:'#ffe4b5',stars:[[50,15],[45,30],[55,30],[35,45],[65,45],[40,60],[60,60],[50,75]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],desc:'Virgo, the celestial maiden, graces the western sky with Spica glowing brilliant blue-white in her hand.',bless:'✦ The maiden\'s grace mirrors yours, dear Princess.'},
-  {name:'Boötes',color:'#ffa07a',stars:[[50,10],[40,25],[60,25],[35,45],[65,45],[45,60],[55,60]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6]],desc:'Arcturus, the fourth brightest star in the night sky, blazes orange-red at the summit of Boötes.',bless:'✦ Arcturus watches over your kingdom from the zenith.'},
-  {name:'Corona Borealis',color:'#c8f0ff',stars:[[30,50],[40,35],[50,30],[60,35],[70,50],[65,65],[35,65]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]],desc:'The Northern Crown — a perfect celestial tiara arcing overhead. Seven stars forming a jewelled arc just for you.',bless:'✦ The universe gave you a crown of real stars. 👑'},
-  {name:'Leo (Simha)',color:'#ffd700',stars:[[50,10],[38,20],[62,20],[30,35],[70,35],[45,50],[55,50],[50,65]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7],[1,5],[2,6]],desc:'The Lion descends in the west as night deepens — Regulus, his heart, is one of the hottest stars visible to the naked eye.',bless:'✦ Leo\'s royal heart beats for those born to be queens.'},
-];
-
-function showConstellations(){
-  const panel=document.getElementById('const-panel');
-  const grid=document.getElementById('c-grid');
-  grid.innerHTML='';
-  panel.style.display='flex';
-
-  CONSTS.forEach((c,i)=>{
-    const card=document.createElement('div');card.className='c-card';
-    const canvas=document.createElement('canvas');canvas.width=130;canvas.height=130;
-    drawConstCanvas(canvas,c);card.appendChild(canvas);
-    const name=document.createElement('div');name.className='c-name';name.textContent=c.name;card.appendChild(name);
-    const desc=document.createElement('div');desc.className='c-desc';desc.textContent=c.desc;card.appendChild(desc);
-    const bless=document.createElement('div');bless.className='c-bless';bless.textContent=c.bless;card.appendChild(bless);
-    grid.appendChild(card);
-    setTimeout(()=>card.classList.add('show'),i*130);
-  });
-
-  document.getElementById('close-const').onclick=()=>{
-    panel.style.display='none';
-    showAfterConstellations();
-  };
-}
-
-function showAfterConstellations(){
-  const content=document.getElementById('msg-content');
-  // Remove const button
-  const btn=content.querySelector('.const-btn');if(btn)btn.remove();
-  // Add core lines
-  let d=0;
-  [
-    ['msg-div',''],
-    ['msg-line','On this beautiful day, the stars aligned just to see you smile.'],
-    ['msg-line','You carry warmth that makes every room feel like home, and a spirit that makes every adventure worth it.'],
-    ['msg-line','The world is genuinely brighter because you\'re in it, Tanya. 🌟'],
-    ['msg-hindi','Bas khush reh. Healthy reh. Aur princess wali vibes kabhi mat chhodna. 👑'],
-    ['msg-title','Happy Birthday, Princess. ✨'],
-  ].forEach(([cls,text])=>{
-    if(cls==='msg-div'){const dv=document.createElement('div');dv.className='msg-div';content.appendChild(dv);d+=.3;return;}
-    const el=document.createElement('div');el.className=cls;el.textContent=text;content.appendChild(el);
-    setTimeout(()=>el.classList.add('show'),d*1000+100);d+=.7;
-  });
-}
-
-function drawConstCanvas(canvas,c){
-  const ctx=canvas.getContext('2d');const s=130;
-  ctx.fillStyle='#04091a';ctx.fillRect(0,0,s,s);
-  ctx.strokeStyle=c.color+'60';ctx.lineWidth=.8;
-  c.lines.forEach(([a,b])=>{
-    ctx.beginPath();
-    ctx.moveTo(c.stars[a][0]*s/100,c.stars[a][1]*s/100);
-    ctx.lineTo(c.stars[b][0]*s/100,c.stars[b][1]*s/100);
-    ctx.stroke();
-  });
-  c.stars.forEach(([px,py],i)=>{
-    const x=px*s/100,y=py*s/100,r=i===0?3:1.8;
-    const g=ctx.createRadialGradient(x,y,0,x,y,r*2.5);
-    g.addColorStop(0,c.color);g.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.arc(x,y,r*2.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
-    ctx.beginPath();ctx.arc(x,y,r*.5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
-  });
-}
-
-// ─── RENDER LOOP ─────────────────────────────────────────────
-const clock=new THREE.Clock();
-let frame=0;
-
-function animate(){
-  requestAnimationFrame(animate);
-  const dt=clock.getDelta();
-  frame++;
-
-  // Camera smoothing
-  camState.yaw+=(camState.targetYaw-camState.yaw)*.06;
-  camState.pitch+=(camState.targetPitch-camState.pitch)*.06;
-  const q=new THREE.Quaternion();
-  const qY=new THREE.Quaternion();qY.setFromAxisAngle(new THREE.Vector3(0,1,0),camState.yaw);
-  const qX=new THREE.Quaternion();qX.setFromAxisAngle(new THREE.Vector3(1,0,0),camState.pitch);
-  q.multiplyQuaternions(qY,qX);
-  camera.quaternion.copy(q);
-
-  // Walking Mechanics
-  if (moveAxis.x !== 0 || moveAxis.y !== 0) {
-    const walkSpeed = 0.08;
-    
-    // Calculate forward and right vectors based purely on where you are looking (Yaw)
-    const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), camState.yaw);
-    const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0,1,0), camState.yaw);
-    
-    // Move the camera
-    camera.position.addScaledVector(forward, -moveAxis.y * walkSpeed);
-    camera.position.addScaledVector(right, moveAxis.x * walkSpeed);
-    
-    // Lock the camera height to eye-level
-    camera.position.y = 1.5; 
-  }
-
-  // HUT animations
-  if(currentScene==='hut'&&hutData){
-    hutData.torchLights.forEach(({light,fl,baseIntensity,t},i)=>{
-      const flicker=Math.sin(frame*.3+i*2.1)*0.2+Math.sin(frame*.7+i)*0.15;
-      light.intensity=baseIntensity*(0.85+flicker);
-      hutData.torchLights[i].t+=dt;
-      if(fl){fl.scale.y=.9+Math.sin(frame*.4+i)*0.15;fl.scale.x=.95+Math.sin(frame*.6+i)*0.1;}
-    });
-  }
-
-  // OUTDOOR animations
-  if(currentScene==='outdoor'&&outdoorData){
-    const group=outdoorData.group;
-
-    // Breeze particles
-    group.traverse(obj=>{
-      if(obj.userData.isBreeze){
-        const pos=obj.geometry.attributes.position;
-        for(let i=0;i<pos.count;i++){
-          let x=pos.getX(i)+.04+Math.sin(frame*.01+i)*.01;
-          if(x>50)x=-50;
-          pos.setX(i,x);
-          pos.setY(i,pos.getY(i)+Math.sin(frame*.02+i*.3)*.003);
-        }
-        pos.needsUpdate=true;
+    function buildMessage(){
+      const ist=getIST(); const win=timeWindow(ist);
+      const content=document.getElementById('msg-content'); content.innerHTML='';
+      const lines=[];
+      if(win==='midnight'){
+        lines.push({cls:'msg-hindi',text:'tu abhi tak soi nahi🤨?? Apne tabyat ka to khayal rakh. btw Happy birthday',delay:0});
+        lines.push({cls:'msg-hindi',text:'chal Tereko kuch mast bata ta hu ✨',delay:1.2});
+        lines.push({cls:'const-btn-line',delay:2});
+      } else if(win==='morning'){
+        lines.push({cls:'msg-hindi',text:'tu uth gayi🤨?? Well, Happy birthday Princess Tanya',delay:0});
+        lines.push({cls:'msg-title',text:'Happy Birthday, Princess Tanya 👑',delay:1});
+        lines.push({cls:'msg-div',delay:1.8});
+        addCoreLines(lines,2.2);
+      } else {
+        lines.push({cls:'msg-crown',text:'👑',delay:0});
+        lines.push({cls:'msg-title',text:'Happy Birthday, Princess Tanya 👑',delay:.5});
+        lines.push({cls:'msg-div',delay:1.2});
+        addCoreLines(lines,1.6);
       }
-      if(obj.userData.isRain){
-        const pos=obj.geometry.attributes.position;
-        for(let i=0;i<pos.count;i++){
-          let y=pos.getY(i)-.4;
-          if(y<-2){y=100;pos.setX(i,(Math.random()-.5)*200);pos.setZ(i,(Math.random()-.5)*200);}
-          pos.setY(i,y);
+      lines.forEach(({cls,text,delay})=>{
+        if(cls==='msg-div'){ const d=document.createElement('div'); d.className='msg-div'; content.appendChild(d); return; }
+        if(cls==='const-btn-line'){
+          const btn=document.createElement('button'); btn.className='const-btn'; btn.textContent='✦ Dekh Aasman Mein ✦';
+          btn.style.opacity='0'; btn.style.transition=`opacity .8s ease ${delay}s`;
+          btn.onclick=showConstellations; content.appendChild(btn);
+          setTimeout(()=>btn.style.opacity='1',delay*1000+100); return;
         }
-        pos.needsUpdate=true;
-      }
-    });
-
-    // Petal animation
-    if(group.userData.petals){
-      group.userData.petals.forEach(p=>{
-        p.position.x+=p.userData.vx+Math.sin(frame*.02)*.005;
-        p.position.y+=p.userData.vy;
-        p.position.z+=p.userData.vz;
-        p.rotation.x+=p.userData.spin;p.rotation.y+=p.userData.spin*.7;
-        if(p.position.y<-1.5){p.position.y=8+Math.random()*4;p.position.x=(Math.random()-.5)*80;}
-        if(p.position.z>50||p.position.z<-30){p.position.z=Math.random()*40;}
+        const el=document.createElement('div'); el.className=cls; if(text)el.textContent=text; content.appendChild(el);
+        setTimeout(()=>el.classList.add('show'),delay*1000+100);
       });
     }
 
-    // Clouds drift
-    group.traverse(obj=>{
-      if(obj.isMesh&&obj.geometry.type==='SphereGeometry'&&obj.material.opacity<.9&&obj.material.color.b>.4){
-        obj.position.x+=.01;
-        if(obj.position.x>300)obj.position.x=-300;
-      }
-    });
-
-    // Lightning for storm
-    if(group.userData.storm){
-      lightningTimer-=dt;
-      if(lightningTimer<=0){
-        lightningLight.intensity=20+Math.random()*30;
-        lightningLight.position.set((Math.random()-.5)*200,150,100);
-        setTimeout(()=>lightningLight.intensity=0,100);
-        lightningTimer=2+Math.random()*6;
-      }
+    function addCoreLines(lines,base){
+      let d=base;
+      [['msg-line','On this beautiful day, the stars aligned just to see you smile.'],
+       ['msg-line','You carry warmth that makes every room feel like home.'],
+       ['msg-hindi','Bas khush reh. Healthy reh. Aur princess wali vibes kabhi mat chhodna. 👑'],
+       ['msg-title','Happy Birthday, Princess. ✨']].forEach(([c,t])=>{lines.push({cls:c,text:t,delay:d}); d+=0.7;});
     }
-  }
 
-  renderer.render(scene,camera);
-}
-animate();
+    const CONSTS=[ /* same constellation data */ 
+      {name:'Scorpius',color:'#ff6b6b',stars:[[50,20],[55,35],[60,50],[58,65],[50,75],[42,80],[35,75],[30,65],[40,55],[35,40]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[2,8],[8,9]],desc:'The Scorpion rises with fiery Antares.',bless:'✦ Ancient fire burns bright for you.'},
+      {name:'Libra',color:'#a8d8a8',stars:[[50,30],[35,50],[65,50],[40,70],[60,70]],lines:[[0,1],[0,2],[1,3],[2,4],[3,4]],desc:'Scales of balance and harmony.',bless:'✦ Balance and grace crown your year.'},
+      {name:'Virgo',color:'#ffe4b5',stars:[[50,15],[45,30],[55,30],[35,45],[65,45],[40,60],[60,60],[50,75]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],desc:'Spica shines brilliant blue-white.',bless:'✦ The maiden mirrors your grace.'},
+      {name:'Boötes',color:'#ffa07a',stars:[[50,10],[40,25],[60,25],[35,45],[65,45],[45,60],[55,60]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6]],desc:'Arcturus blazes orange overhead.',bless:'✦ Guardian star watches you.'},
+      {name:'Corona Borealis',color:'#c8f0ff',stars:[[30,50],[40,35],[50,30],[60,35],[70,50],[65,65],[35,65]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]],desc:'The Northern Crown, a celestial tiara.',bless:'✦ A crown of real stars for you. 👑'},
+      {name:'Leo',color:'#ffd700',stars:[[50,10],[38,20],[62,20],[30,35],[70,35],[45,50],[55,50],[50,65]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],desc:'Regulus, heart of the Lion, shines hot.',bless:'✦ Royal heart for a born queen.'}
+    ];
+
+    function showConstellations(){
+      const panel=document.getElementById('const-panel'), grid=document.getElementById('c-grid');
+      grid.innerHTML=''; panel.style.display='flex';
+      CONSTS.forEach((c,i)=>{
+        const card=document.createElement('div'); card.className='c-card';
+        const canvas=document.createElement('canvas'); canvas.width=130; canvas.height=130;
+        const ctx=canvas.getContext('2d'); ctx.fillStyle='#04091a'; ctx.fillRect(0,0,130,130);
+        ctx.strokeStyle=c.color+'60'; ctx.lineWidth=.8;
+        c.lines.forEach(([a,b])=>{ ctx.beginPath(); ctx.moveTo(c.stars[a][0]*1.3,c.stars[a][1]*1.3); ctx.lineTo(c.stars[b][0]*1.3,c.stars[b][1]*1.3); ctx.stroke(); });
+        c.stars.forEach(([px,py])=>{ ctx.beginPath(); ctx.arc(px*1.3,py*1.3,2,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); });
+        card.appendChild(canvas);
+        card.innerHTML+=`<div class="c-name">${c.name}</div><div class="c-desc">${c.desc}</div><div class="c-bless">${c.bless}</div>`;
+        grid.appendChild(card); setTimeout(()=>card.classList.add('show'),i*120);
+      });
+      document.getElementById('close-const').onclick=()=>{ panel.style.display='none'; showAfterConstellations(); };
+    }
+
+    function showAfterConstellations(){
+      const content=document.getElementById('msg-content');
+      content.querySelector('.const-btn')?.remove();
+      let d=0;
+      [['msg-line','The stars have spoken — this year is yours.'],['msg-title','✨ Happy Birthday, Princess Tanya ✨']].forEach(([c,t])=>{
+        const el=document.createElement('div'); el.className=c; el.textContent=t; content.appendChild(el);
+        setTimeout(()=>el.classList.add('show'),d*1000+100); d+=0.8;
+      });
+    }
+
+    // ─── ANIMATION LOOP ────────────────────────────────────────
+    const clock=new THREE.Clock(); let frame=0;
+    function animate(){
+      requestAnimationFrame(animate);
+      const dt=clock.getDelta(); frame++;
+      camState.yaw+=(camState.targetYaw-camState.yaw)*.06;
+      camState.pitch+=(camState.targetPitch-camState.pitch)*.06;
+      const qY=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),camState.yaw);
+      const qX=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),camState.pitch);
+      camera.quaternion.copy(qY.multiply(qX));
+
+      if (moveAxis.x || moveAxis.y) {
+        const sp=0.08;
+        const fwd=new THREE.Vector3(0,0,-1).applyAxisAngle(new THREE.Vector3(0,1,0),camState.yaw);
+        const rgt=new THREE.Vector3(1,0,0).applyAxisAngle(new THREE.Vector3(0,1,0),camState.yaw);
+        camera.position.addScaledVector(fwd, -moveAxis.y*sp);
+        camera.position.addScaledVector(rgt, moveAxis.x*sp);
+        camera.position.y=1.5;
+      }
+
+      if(currentScene==='hut'&&hutData){
+        hutData.torchLights.forEach((o,i)=>{
+          o.light.intensity=o.baseIntensity*(0.8+Math.sin(frame*0.3+i)*0.2);
+          if(o.fl){ o.fl.scale.y=0.9+Math.sin(frame*0.5+i)*0.15; }
+        });
+      }
+      if(currentScene==='outdoor'&&outdoorData){
+        outdoorData.group.traverse(obj=>{
+          if(obj.userData?.isBreeze){
+            const pos=obj.geometry.attributes.position;
+            for(let i=0;i<pos.count;i++){ pos.setX(i,pos.getX(i)+0.03); if(pos.getX(i)>60)pos.setX(i,-60); }
+            pos.needsUpdate=true;
+          }
+        });
+        if(Math.random()<0.002){ lightningLight.intensity=25; setTimeout(()=>lightningLight.intensity=0,120); }
+      }
+      renderer.render(scene,camera);
+    }
+    animate();
+  })();
 </script>
 </body>
 </html>
-
