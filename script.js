@@ -298,6 +298,7 @@ function drawTimer(){
   // Crown
   TCT.font='58px serif';TCT.textAlign='center';TCT.fillText('\uD83D\uDC51',CW/2,78);
   TCT.fillStyle='rgba(200,168,80,.72)';TCT.font='italic 17px Georgia,serif';TCT.fillText('\u2736  THE KINGDOM AWAITS  \u2736',CW/2,108);
+  TCT.fillStyle='rgba(200,168,80,.72)';TCT.font='italic 17px Georgia,serif';TCT.fillText('\u2736  THERES A PRETTY TRYING TO PEEP, BUT ALAS! THE SERVER DO NOT UNDERSTAND BEAUTY  \u2736',CW/2,108);
   TCT.strokeStyle='rgba(200,146,42,.3)';TCT.lineWidth=1;TCT.beginPath();TCT.moveTo(44,122);TCT.lineTo(CW-44,122);TCT.stroke();
   if(!isBday(getIST())){
     const cd=cdData();
