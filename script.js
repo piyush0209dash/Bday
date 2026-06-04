@@ -250,10 +250,30 @@ function buildGameRoom(){
   put(bx(1.3,.72,.9,wdM),CX-4,.36,CZ+4);put(bx(1.3,.32,.9,ms(0x6a3a10,.8)),CX-4,.9,CZ+4,-.28);put(bx(.22,.22,.1,goM.clone()),CX-4,.7,CZ+3.57);
   // Spinning top
   put(cy(.28,0,.45,8,ms(0xff4444,.6)),4,1.06,CZ-4);
+  // Arcade machines for external games
+  // Clicker Heroes machine (left wall)
+  put(bx(1.2,2.2,.5,ms(0x1a1a6a,.8)),-6,1.1,CZ-5);put(bx(1,.06,.42,ms(0xc8922a,.3,.85)),-6,2.26,CZ-5);
+  const ch_screen=bx(.85,1.1,.04,ms(0x0a1a3a,.2,0,0x4466ff,1.2));put(ch_screen,-6,1.3,CZ-4.74);
+  put(bx(.9,.08,.08,ms(0xc8922a,.3,.85)),-6,2.2,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),-6.48,1.1,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),-5.52,1.1,CZ-4.74);
+  const chL=new THREE.PointLight(0x4466ff,1.2,3);chL.position.set(-6,1.8,CZ-4.5);scene.add(chL);TORCHES.push({li:chL,fl:null,base:1.2,t:1});
+  // 2048 machine (right wall)
+  put(bx(1.2,2.2,.5,ms(0x6a1a1a,.8)),6,1.1,CZ-5);put(bx(1,.06,.42,ms(0xc8922a,.3,.85)),6,2.26,CZ-5);
+  const g2048_screen=bx(.85,1.1,.04,ms(0x1a0a08,.2,0,0xff8844,1.2));put(g2048_screen,6,1.3,CZ-4.74);
+  put(bx(.9,.08,.08,ms(0xc8922a,.3,.85)),6,2.2,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),5.52,1.1,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),6.48,1.1,CZ-4.74);
+  const g2L=new THREE.PointLight(0xff8844,1.2,3);g2L.position.set(6,1.8,CZ-4.5);scene.add(g2L);TORCHES.push({li:g2L,fl:null,base:1.2,t:2});
+  // Fireboy & Watergirl machine (back center)
+  put(bx(1.4,2.4,.5,ms(0x1a3a1a,.8)),0,1.2,CZ+6.5);put(bx(1.2,.06,.45,ms(0xc8922a,.3,.85)),0,2.46,CZ+6.5);
+  const fw_screen=bx(1,.15,.04,ms(0x080a08,.2,0,0x44ffaa,.9));put(fw_screen,0,1.5,CZ+6.22);
+  const fwL=new THREE.PointLight(0x44ffaa,.9,3);fwL.position.set(0,1.8,CZ+6);scene.add(fwL);TORCHES.push({li:fwL,fl:null,base:.9,t:3});
+  // Signs above machines
+  put(bx(.9,.04,.28,ms(0xc8922a,.3,.85)),-6,2.38,CZ-4.74);put(bx(.9,.04,.28,ms(0xc8922a,.3,.85)),6,2.38,CZ-4.74);put(bx(1.05,.04,.32,ms(0xc8922a,.3,.85)),0,2.58,CZ+6.22);
   torch(-7.7,3.2,CZ-4);torch(-7.7,3.2,CZ+4);torch(7.7,3.2,CZ-4);torch(7.7,3.2,CZ+4);
   IACTS.push({x:0,z:CZ-3.5,r:2,label:'[E] Play Darts',game:'darts'});
   IACTS.push({x:CX-4,z:CZ+4,r:1.8,label:'[E] Open Treasure Chest',game:'catch'});
   IACTS.push({x:CX+3,z:CZ+3,r:1.8,label:'[E] Chess Memory',game:'memory'});
+  IACTS.push({x:-6,z:CZ-5,r:1.8,label:'[E] Play Clicker Heroes',game:'clicker'});
+  IACTS.push({x:6,z:CZ-5,r:1.8,label:'[E] Play 2048',game:'g2048'});
+  IACTS.push({x:0,z:CZ+6.5,r:1.8,label:'[E] Play Fireboy & Watergirl',game:'fbwg'});
 }
 
 // ═══════════════ GATE + TIMER CANVAS TEXTURE ══════════════════
@@ -424,7 +444,61 @@ function closeG(){
   gameActive=false;if(activeRAF){cancelAnimationFrame(activeRAF);activeRAF=null}
 }
 document.getElementById('gcl').onclick=closeG;
-function launchGame(t){({riddle:gameRiddle,memory:gameMemory,potion:gamePotion,fortune:gameFortune,quiz:gameQuiz,darts:gameDarts,catch:gameCatch})[t]?.()}
+function launchGame(t){
+  if(t==='clicker')return launchExtGame('Clicker Heroes','https://www.clickerheroes2.com/','clicker');
+  if(t==='g2048')return launchExtGame('2048','https://play2048.co/','g2048');
+  if(t==='fbwg')return launchExtGame('Fireboy & Watergirl','https://www.coolmathgames.com/0-fireboy-and-watergirl-in-the-forest-temple','fbwg');
+  ({riddle:gameRiddle,memory:gameMemory,potion:gamePotion,fortune:gameFortune,quiz:gameQuiz,darts:gameDarts,catch:gameCatch})[t]?.();
+}
+
+function launchExtGame(title, url, type){
+  // Close mini-game overlay if open
+  document.getElementById('go').style.display='none';
+  gameActive=true;
+  document.getElementById('jl').style.opacity='0';
+  document.getElementById('jr').style.opacity='0';
+  document.getElementById('ip').style.display='none';
+
+  const overlay=document.createElement('div');
+  overlay.id='ext-overlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:800;background:#000;display:flex;flex-direction:column;font-family:Cinzel,serif';
+
+  // Top bar
+  const bar=document.createElement('div');
+  bar.style.cssText='padding:8px 16px;background:#0a0604;border-bottom:1px solid rgba(232,192,96,.2);display:flex;justify-content:space-between;align-items:center;flex-shrink:0';
+  bar.innerHTML='<span style="color:#e8c060;font-size:.72rem;letter-spacing:2px">✦ '+title+' ✦</span>';
+  const closeBtn=document.createElement('button');
+  closeBtn.textContent='✕ Back to Castle';
+  closeBtn.style.cssText='background:transparent;border:1px solid rgba(232,192,96,.4);color:#e8c060;padding:5px 16px;border-radius:16px;cursor:pointer;font-family:Cinzel,serif;font-size:.65rem;letter-spacing:1px';
+  closeBtn.onclick=()=>{overlay.remove();gameActive=false;document.getElementById('jl').style.opacity='1';document.getElementById('jr').style.opacity='1'};
+  bar.appendChild(closeBtn);
+  overlay.appendChild(bar);
+
+  // iframe
+  const frame=document.createElement('iframe');
+  frame.src=url;
+  frame.style.cssText='flex:1;border:none;width:100%;background:#111';
+  frame.allow='fullscreen autoplay';
+  frame.setAttribute('allowfullscreen','');
+  overlay.appendChild(frame);
+
+  // Blocked notice (shown if iframe fails)
+  const notice=document.createElement('div');
+  notice.id='iframe-notice';
+  notice.style.cssText='position:absolute;inset:0;top:42px;display:none;flex-direction:column;align-items:center;justify-content:center;background:#050208;gap:14px;pointer-events:none';
+  notice.innerHTML='<div style="font-size:2rem">🎮</div><div style="color:#e8c060;font-size:.9rem;letter-spacing:2px">'+title+'</div><div style="color:#8a7a5a;font-size:.72rem;max-width:280px;text-align:center;line-height:1.8">This game blocks direct embedding. Tap the button below to open it in a new tab.</div>';
+  const openBtn=document.createElement('button');
+  openBtn.textContent='✦ Open '+title+' in New Tab';
+  openBtn.style.cssText='padding:10px 24px;background:transparent;border:1px solid rgba(232,192,96,.5);color:#e8c060;font-family:Cinzel,serif;font-size:.72rem;letter-spacing:2px;border-radius:20px;cursor:pointer;pointer-events:all';
+  openBtn.onclick=()=>window.open(url,'_blank');
+  notice.appendChild(openBtn);overlay.appendChild(notice);
+
+  // Detect iframe block after 4s
+  frame.onerror=()=>{notice.style.display='flex'};
+  setTimeout(()=>{try{const t2=frame.contentWindow?.location?.href;if(!t2||t2==='about:blank'){notice.style.display='flex'}}catch(e){notice.style.display='flex'}},4000);
+
+  document.body.appendChild(overlay);
+}
 
 // RIDDLE
 const RIDDLES=[{q:'I dance without feet, glow without sun, born from wood, die in water.',a:'fire',h:'🔥'},{q:'The more you take, the more you leave behind. What am I?',a:'footsteps',h:'👣'},{q:'I have a crown but am not a queen. I have bark but no bite.',a:'tree',h:'🌲'},{q:'I speak without a mouth, hear without ears, and come alive with wind.',a:'echo',h:'🌬️'},{q:'I fly without wings, cry without eyes. Where I go, darkness follows.',a:'cloud',h:'☁️'}];
@@ -611,3 +685,4 @@ const piv=setInterval(()=>{pv=Math.min(100,pv+3);document.getElementById('pf').s
     setTimeout(()=>document.getElementById('ht').style.opacity='0',5500);
   },1500)},350);
 }},25);
+
