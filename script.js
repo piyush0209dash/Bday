@@ -446,7 +446,7 @@ function closeG(){
 }
 document.getElementById('gcl').onclick=closeG;
 function launchGame(t){
-  if(t==='clicker')return launchExtGame('Clicker Heroes','https://www.clickerheroes2.com/','clicker');
+  if(t==='clicker')return launchExtGame('Clicker Heroes','https://cdn.clickerheroes.com/gamebuild/index.php','clicker');
   if(t==='g2048')return launchExtGame('2048','https://play2048.co/','g2048');
   if(t==='fbwg')return launchExtGame('Fireboy & Watergirl','https://www.coolmathgames.com/0-fireboy-and-watergirl-in-the-forest-temple','fbwg');
   ({riddle:gameRiddle,memory:gameMemory,potion:gamePotion,fortune:gameFortune,quiz:gameQuiz,darts:gameDarts,catch:gameCatch})[t]?.();
