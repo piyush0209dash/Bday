@@ -4,7 +4,7 @@ const getIST=()=>{const n=new Date();return new Date(n.getTime()+n.getTimezoneOf
 const isBday=t=>t.getMonth()===5&&t.getDate()===12;
 const tWin=t=>{const h=t.getHours();return h<4?'mid':h<10?'morn':'day'};
 const pad2=n=>String(n).padStart(2,'0');
-const cdData=()=>{const t=getIST();let b=new Date(t.getFullYear(),5,12);if(t>=b)b=new Date(t.getFullYear()+1,5,12);const d=b-t;return{days:Math.floor(d/86400000),h:Math.floor((d%86400000)/3600000),m:Math.floor((d%3600000)/60000),s:Math.floor(d%60000/1000)}};
+const cdData=()=>{const t=getIST();let b=new Date(t.getFullYear(),5,12);if(t>=b)b=new Date(t.getFullYear()+1,5,12);const d=b-t;return{days:Math.floor(d/86400000),h:Math.floor((d%86400000)/3600000),m:Math.floor((d%3600000)/60000),s:Math.floor((d%60000)/1000)}};
 
 // ── THREE.JS ──────────────────────────────────────────────────
 const canvas=document.getElementById('c');
@@ -37,16 +37,13 @@ const COLLS=[];
 const addCol=(xmn,xmx,zmn,zmx)=>COLLS.push({xmn,xmx,zmn,zmx});
 const canMove=(nx,nz)=>{const r=.3;for(const c of COLLS)if(nx+r>c.xmn&&nx-r<c.xmx&&nz+r>c.zmn&&nz-r<c.zmx)return false;return true};
 function wall(x,y,z,w,h,d,mat,col=true){const m=bx(w,h,d,mat);m.position.set(x,y,z);scene.add(m);if(col)addCol(x-w/2,x+w/2,z-d/2,z+d/2);return m}
-// Wall with centered door gap (no collision above door height)
 const WH=5,DW=3.4,DH=3.8;
 function wallDoor(ax,ay,az,tw,wallD,mat,gx,gz){
-  // ax/az = center axis; gx/gz = gap center on that axis; tw=total width
   const hw=(tw-DW)/2;
   const p1=gx!==null?gx-DW/2-hw/2:gz-DW/2-hw/2;
   const p2=gx!==null?gx+DW/2+hw/2:gz+DW/2+hw/2;
   if(gx!==null){
     wall(p1,ay,az,hw,WH,wallD,mat);wall(p2,ay,az,hw,WH,wallD,mat);
-    // header — NO collision (above player)
     const hdr=bx(DW,WH-DH,wallD,mat);hdr.position.set(gx,DH+(WH-DH)/2,az);scene.add(hdr);
   } else {
     wall(ax,ay,p1,wallD,WH,hw,mat);wall(ax,ay,p2,wallD,WH,hw,mat);
@@ -72,51 +69,41 @@ let nearI=null,gameActive=false;
 function buildMain(){
   const smW=ml(0x4a3a2a),smD=ml(0x2e2318),flM=ml(0x3a2e22),ceM=ml(0x1a1008),wdM=ms(0x5a3010,.9),dwM=ms(0x3a1a08,.95),goM=ms(0xc8922a,.3,.85);
   put(bx(16,.15,16,flM),0,0,0); put(bx(16,.15,16,ceM),0,WH,0);
-  // Ceiling beams
   [-3,0,3].forEach(z=>put(bx(16,.28,.38,dwM),0,WH-.18,z));
   [-3,0,3].forEach(x=>put(bx(.38,.28,16,dwM),x,WH-.18,0));
-  // Walls: left(x=-8 door@z=0), right(x=8 door@z=0), back(z=-8 door@x=0), front(z=8 door@x=0)
-  wallDoor(null,WH/2,-8,16,.3,smW,0,null); // back — gx=0
-  // Actually re-call: back wall (z=-8), full width 16, door at x=0
-  // Let me use correct params: wallDoor for X-spanning wall (door along X axis)
-  // Cleared previous call — rewriting:
-  // Back wall z=-8, spans x -8..8, door centered at x=0
+  
   {const hw=(16-DW)/2,p1=0-DW/2-hw/2,p2=0+DW/2+hw/2;
    wall(p1,WH/2,-8,hw,WH,.3,smW);wall(p2,WH/2,-8,hw,WH,.3,smW);
    const hd=bx(DW,WH-DH,.3,smW);hd.position.set(0,DH+(WH-DH)/2,-8);scene.add(hd);}
-  // Front wall z=8
   {const hw=(16-DW)/2,p1=0-DW/2-hw/2,p2=0+DW/2+hw/2;
    wall(p1,WH/2,8,hw,WH,.3,smW);wall(p2,WH/2,8,hw,WH,.3,smW);
    const hd=bx(DW,WH-DH,.3,smW);hd.position.set(0,DH+(WH-DH)/2,8);scene.add(hd);}
-  // Left wall x=-8, spans z -8..8, door at z=0
   {const hw=(16-DW)/2,p1=0-DW/2-hw/2,p2=0+DW/2+hw/2;
    wall(-8,WH/2,p1,.3,WH,hw,smW);wall(-8,WH/2,p2,.3,WH,hw,smW);
    const hd=bx(.3,WH-DH,DW,smW);hd.position.set(-8,DH+(WH-DH)/2,0);scene.add(hd);}
-  // Right wall x=8
   {const hw=(16-DW)/2,p1=0-DW/2-hw/2,p2=0+DW/2+hw/2;
    wall(8,WH/2,p1,.3,WH,hw,smW);wall(8,WH/2,p2,.3,WH,hw,smW);
    const hd=bx(.3,WH-DH,DW,smW);hd.position.set(8,DH+(WH-DH)/2,0);scene.add(hd);}
-  // Stone row texture
+  
   for(let y=.4;y<WH;y+=.55){put(bx(15.8,.05,.03,smD),0,y,-8.01);put(bx(15.8,.05,.03,smD),0,y,8.01)}
-  // FIREPLACE
   put(bx(4.5,3.2,.5,smD),0,1.6,-7.85);put(bx(.8,4.2,1.1,smW),-2.6,2.1,-7.85);put(bx(.8,4.2,1.1,smW),2.6,2.1,-7.85);
   put(bx(5.6,.5,1.2,wdM),0,3.65,-7.85);
   const f1=cy(.5,0,.7,10,ms(0xff6600,.2,0,0xff4400,5));put(f1,0,.35,-7.4);
   const f2=cy(.3,0,.45,8,ms(0xffcc00,.2,0,0xffaa00,5));put(f2,0,.5,-7.4);
   const fpL=new THREE.PointLight(0xff6600,4.5,12);fpL.position.set(0,2,-7);scene.add(fpL);
   TORCHES.push({li:fpL,fl:f1,base:4.5,t:0});TORCHES.push({li:null,fl:f2,base:0,t:5});
-  // Mantle candles
+  
   [-1.5,0,1.5].forEach(cx=>{const cb=cy(.05,.05,.28,6,ms(0xf5e6c8,.9));put(cb,cx,3.88,-7.85);const cf=cy(.06,0,.14,6,ms(0xff8800,.2,0,0xff6600,3));put(cf,cx,4.05,-7.85);const cl=new THREE.PointLight(0xffaa44,.85,3);cl.position.set(cx,4.08,-7.85);scene.add(cl);TORCHES.push({li:cl,fl:cf,base:.85,t:Math.random()*10})});
-  // Rug + table
+  
   put(bx(6.4,.04,8.4,ms(0xc8922a,.5)),0,.02,0);put(bx(6,.04,8,ms(0x8b2020,.9)),0,.03,0);
   put(bx(3.5,.1,1.6,wdM),0,.94,1);
   [[-1.5,-.65],[1.5,-.65],[-1.5,.65],[1.5,.65]].forEach(([lx,lz])=>put(cy(.08,.08,.94,6,dwM),lx,.47,1+lz));
   [-1.1,0,1.1].forEach(cx=>{put(cy(.05,.05,.26,6,ms(0xf5e6c8,.9)),cx,1.08,1);const cf=cy(.06,0,.13,6,ms(0xff8800,.2,0,0xff6600,3));put(cf,cx,1.22,1);const cl=new THREE.PointLight(0xffaa44,.9,3);cl.position.set(cx,1.24,1);scene.add(cl);TORCHES.push({li:cl,fl:cf,base:.9,t:Math.random()*8})});
-  // Sword + Shield on wall
+  
   put(bx(.06,2.8,.04,ms(0xc0c0c0,.1,.9)),6,3.5,-7.85);put(bx(.6,.1,.08,goM),6,2.1,-7.85);put(bx(.08,.75,.08,dwM),6,1.55,-7.85);
   put(bx(.08,1.6,1.3,ms(0x8b1a1a,.7)),4,3,-7.85);put(bx(.1,1.65,1.35,goM.clone()),3.96,3,-7.85);
   put(bx(2,.04,2.5,ms(0x8b1a1a,.8)),0,4.2,-7.95,.3);
-  // Torches
+  
   [[-7.7,3.2,-5],[-7.7,3.2,5],[7.7,3.2,-5],[7.7,3.2,5],[-7.7,3.2,0],[7.7,3.2,0]].forEach(([x,y,z])=>torch(x,y,z));
   scene.add(new THREE.AmbientLight(0x2a1808,.65));
 }
@@ -125,20 +112,16 @@ function buildMain(){
 function buildLibrary(){
   const CX=-15,CZ=0,lm=ml(0x2a1e12),wdM=ms(0x5a3010,.9),dwM=ms(0x3a1a08,.95);
   put(bx(14,.15,16,ml(0x1e1610)),CX,0,CZ);put(bx(14,.15,16,ml(0x0e0c08)),CX,WH,CZ);
-  // Beams
   [-4,0,4].forEach(z=>put(bx(14,.25,.35,dwM),CX,WH-.15,z));
-  // Outer walls (3 sides only — shared wall at x=-8 already built by main hall)
-  wall(CX-7,WH/2,CZ,.3,WH,16,lm);     // far left
-  wall(CX,WH/2,CZ-8,14,WH,.3,lm);     // back
-  wall(CX,WH/2,CZ+8,14,WH,.3,lm);     // front
-  // BOOKSHELVES against left wall
+  wall(CX-7,WH/2,CZ,.3,WH,16,lm);wall(CX,WH/2,CZ-8,14,WH,.3,lm);wall(CX,WH/2,CZ+8,14,WH,.3,lm);
+  
   const BC=[0x8b1a1a,0x1a4a8b,0x2a6a2a,0x6a4a1a,0x4a1a6a,0x6a2a2a,0x2a5a5a,0x8b6a1a,0x5a1a5a,0x1a6a5a];
   function shelf(sx,sz,horiz){
     const bkW=horiz?0.1:3.8,bkD=horiz?3.8:0.1;
     put(bx(bkW,WH*.88,bkD,dwM),sx,WH*.44,sz);
     const cnt=horiz?6:6;
     for(let i=0;i<5;i++){
-      const sy=i*.85+.35,sw=horiz?bkD:bkW,sdepth=horiz?0.1:bkW;
+      const sy=i*.85+.35;
       put(bx(bkW+.02,.08,bkD+.02,wdM),sx,sy,sz);
       let cur=horiz?(sz-bkD/2):(sx-bkW/2);
       for(let b=0;b<cnt;b++){
@@ -152,17 +135,17 @@ function buildLibrary(){
   }
   shelf(CX-6.7,-5,false);shelf(CX-6.7,0,false);shelf(CX-6.7,5,false);
   shelf(CX,-7.6,true);shelf(CX+4,-7.6,true);
-  // Reading chair
+  
   put(bx(1.3,.2,1.1,ms(0x5a2040,.85)),CX+4,1,3);put(bx(1.3,1.6,.15,ms(0x5a2040,.85)),CX+4,1.9,2.52);
   put(bx(.14,.5,1.1,ms(0x5a2040,.85)),CX+3.27,1.3,3);put(bx(.14,.5,1.1,ms(0x5a2040,.85)),CX+4.73,1.3,3);
   put(bx(.85,.08,.85,wdM),CX+3,1.1,4.5);put(cy(.08,.08,.94,6,dwM),CX+3,.47,4.5);
   put(bx(.65,.04,.85,ms(0xf5e6c8,.9)),CX+3,1.15,4.5);
-  // Globe
   put(sp(.3,14,ms(0x2a6a7a,.3,.1)),CX+2.5,1.62,-5);put(cy(.32,.32,.12,8,wdM),CX+2.5,1.2,-5);put(cy(.08,.08,.9,8,dwM),CX+2.5,.45,-5);
-  // Lantern
+  
   const lan=sp(.22,8,ms(0xc8922a,.3,.8));put(lan,CX,3.65,0);
   const ll=new THREE.PointLight(0xffcc66,2.2,9);ll.position.set(CX,3.65,0);scene.add(ll);TORCHES.push({li:ll,fl:lan,base:2.2,t:Math.random()*10});
   [[-6.5,3.2,-6],[-6.5,3.2,0],[-6.5,3.2,6]].map(([x,y,z])=>torch(CX+x,y,z));
+  
   IACTS.push({x:CX+4,z:3,r:1.8,label:'[E] Riddle Scroll',game:'riddle'});
   IACTS.push({x:CX-3,z:-2,r:2,label:'[E] Memory Game',game:'memory'});
 }
@@ -173,25 +156,26 @@ function buildAlchemy(){
   put(bx(14,.15,16,ml(0x0a1818)),CX,0,CZ);put(bx(14,.15,16,ml(0x060c0c)),CX,WH,CZ);
   [-4,0,4].forEach(z=>put(bx(14,.25,.35,dwM),CX,WH-.15,z));
   wall(CX+7,WH/2,CZ,.3,WH,16,am);wall(CX,WH/2,CZ-8,14,WH,.3,am);wall(CX,WH/2,CZ+8,14,WH,.3,am);
-  // Benches
+  
   [[CX,CZ-5.5],[CX-2,CZ+4],[CX+2,CZ+4]].forEach(([bx2,bz])=>{put(bx(3.5,.1,1.1,ms(0x4a3a2a,.85)),bx2,1.05,bz);put(bx(3.5,.8,1.1,ms(0x3a2a1a,.9)),bx2,.5,bz)});
-  // Potions
+  
   const PC=[[0xcc44ee,0x660099],[0x22ee88,0x006633],[0xeeee22,0x666600],[0xff4444,0x880000],[0x4488ff,0x002288],[0x88ffdd,0x006644]];
   [[CX-1,CZ-5],[CX+.5,CZ-5],[CX+2,CZ-5],[CX-1,CZ+3.8],[CX+.5,CZ+3.8],[CX+2,CZ+3.8]].forEach(([px,pz],i)=>{
     const [g,d]=PC[i%PC.length];const pm=new THREE.MeshStandardMaterial({color:d,roughness:.1,transparent:true,opacity:.75,emissive:new THREE.Color(g),emissiveIntensity:.45,side:DS});
     put(cy(.07,.1,.38,8,pm),px,1.24,pz);const pl=new THREE.PointLight(g,.65,2.5);pl.position.set(px,1.48,pz);scene.add(pl);TORCHES.push({li:pl,fl:null,base:.65,t:Math.random()*10});
   });
-  // Cauldron
+  
   put(cy(.65,.5,.55,14,ms(0x222222,.4,.85)),CX,1.34,CZ);
   const brewM=new THREE.MeshStandardMaterial({color:0x22aa55,roughness:.1,emissive:new THREE.Color(0x00ff88),emissiveIntensity:2,side:DS});
   const brewD=new THREE.Mesh(new THREE.CircleGeometry(.58,16),brewM);brewD.rotation.x=-Math.PI/2;brewD.position.set(CX,1.63,CZ);scene.add(brewD);
   const cL=new THREE.PointLight(0x00ff88,2.8,7);cL.position.set(CX,2.5,CZ);scene.add(cL);TORCHES.push({li:cL,fl:brewD,base:2.8,t:0});
-  // Orb
+  
   const orbM=new THREE.MeshStandardMaterial({color:0x8888ff,roughness:.05,metalness:.2,transparent:true,opacity:.82,emissive:new THREE.Color(0x4444ff),emissiveIntensity:1.2,side:DS});
   put(sp(.26,16,orbM),CX+3,1.6,CZ+3);put(cy(.35,.35,.14,10,ms(0xc8922a,.3,.85)),CX+3,1.22,CZ+3);put(cy(.08,.08,.82,8,dwM),CX+3,.42,CZ+3);
   const oL=new THREE.PointLight(0x6666ff,2.5,6);oL.position.set(CX+3,1.8,CZ+3);scene.add(oL);TORCHES.push({li:oL,fl:null,base:2.5,t:3});
   put(sp(.18,12,ms(0xe8e0d0,.9)),CX-3,1.65,CZ-2);
   [[6.5,3.2,-6],[6.5,3.2,0],[6.5,3.2,6],[0,3.2,-7.5],[0,3.2,7.5]].forEach(([x,y,z])=>torch(CX+x,y,z));
+  
   IACTS.push({x:CX,z:CZ,r:2,label:'[E] Brew a Potion',game:'potion'});
   IACTS.push({x:CX+3,z:CZ+3,r:1.5,label:'[E] Consult the Orb',game:'fortune'});
 }
@@ -202,28 +186,29 @@ function buildThrone(){
   put(bx(16,.15,14,ml(0x150e1e)),CX,0,CZ);put(bx(16,.15,14,ml(0x0c0810)),CX,WH+.3,CZ);
   [-4,0,4].forEach(x=>put(bx(.35,.28,14,dwM),x,WH-.15,CZ));
   wall(CX,WH/2,CZ-7,16,WH,.3,pm);wall(-8,WH/2,CZ,.3,WH,14,pm);wall(8,WH/2,CZ,.3,WH,14,pm);
-  // Carpet
+  
   put(bx(3.4,.04,12.4,goM.clone()),CX,.03,CZ);put(bx(3,.04,12,ms(0x6b0000,.85)),CX,.04,CZ);
-  // Columns
+  
   [[-5,CZ-4],[-5,CZ+2],[5,CZ-4],[5,CZ+2]].forEach(([cx2,cz2])=>{
     put(cy(.28,.28,WH,12,ms(0x9a8a7a,.65)),cx2,WH/2,cz2);
     put(cy(.4,.28,.28,12,goM.clone()),cx2,WH-.15,cz2);put(cy(.38,.42,.2,12,goM.clone()),cx2,.1,cz2);
   });
-  // Throne
+  
   put(bx(2.2,.65,1.6,ms(0x4a1e6e,.7,.2)),CX,.32,CZ-5.5);put(bx(2.2,2.6,.2,ms(0x5a2880,.7,.2)),CX,2.05,CZ-6.1);
   put(bx(.22,.55,1.5,ms(0x5a2880,.7,.2)),-1.2,.9,CZ-5.5);put(bx(.22,.55,1.5,ms(0x5a2880,.7,.2)),1.2,.9,CZ-5.5);
   const trc=new THREE.Mesh(new THREE.TorusGeometry(.85,.13,8,18),goM.clone());trc.position.set(CX,3.55,CZ-6.1);scene.add(trc);
   put(bx(1.8,.22,1.3,ms(0x8b0000,.8)),CX,.75,CZ-5.5);
-  // Crown on throne
+  
   put(cy(.3,.3,.15,12,goM.clone()),CX,1.7,CZ-5.5);
   [0,1,2,3,4].forEach(i=>{const a=i/5*Math.PI*2;put(cy(.04,0,.35,4,goM.clone()),CX+Math.cos(a)*.22,1.88+.01,CZ-5.5+Math.sin(a)*.22)});
-  // Lights
+  
   const rL=new THREE.PointLight(0xaa88ff,3.2,16);rL.position.set(CX,4.5,CZ-3);scene.add(rL);TORCHES.push({li:rL,fl:null,base:3.2,t:8});
   [[0xffa0a0,-5],[0xa0a0ff,0],[0xa0ffa0,5]].forEach(([c,x])=>{const sl=new THREE.PointLight(c,.55,8);sl.position.set(x,3,CZ-6.5);scene.add(sl)});
-  // Tapestries
+  
   [-5,5].forEach(x=>{put(bx(.1,3,2.2,ms(0x8b1a1a,.9)),x,2.5,CZ-6.88,Math.PI/2);put(bx(.12,3.1,2.4,goM.clone()),x-.06,2.5,CZ-6.88,Math.PI/2)});
   [[-7.7,3.2,-4],[-7.7,3.2,0],[7.7,3.2,-4],[7.7,3.2,0],[0,3.2,-6.5]].forEach(([x,y,z])=>torch(x,y,CZ+(z+CZ===CZ?z:0)));
   torch(-7.7,3.2,CZ-4);torch(-7.7,3.2,CZ);torch(-7.7,3.2,CZ+4);torch(7.7,3.2,CZ-4);torch(7.7,3.2,CZ);torch(7.7,3.2,CZ+4);
+  
   IACTS.push({x:CX,z:CZ-4.5,r:2.2,label:'[E] Royal Quiz',game:'quiz'});
 }
 
@@ -234,40 +219,39 @@ function buildGameRoom(){
   put(bx(16,.15,14,ml(0x0a1408)),CX,0,CZ);put(bx(16,.15,14,ml(0x060a04)),CX,WH,CZ);
   [-4,0,4].forEach(z=>put(bx(16,.25,.35,dwM),0,WH-.15,8+z));
   wall(-8,WH/2,CZ,.3,WH,14,gm2);wall(8,WH/2,CZ,.3,WH,14,gm2);
-  // Gate wall at z=22 — sides only (gate mesh handles center)
+  
   wall(-5.5,WH/2,GATE_Z,5,WH,.3,gm2);wall(5.5,WH/2,GATE_Z,5,WH,.3,gm2);
   const ghd=bx(DW+.5,WH-DH,.3,gm2);ghd.position.set(0,DH+(WH-DH)/2,GATE_Z);scene.add(ghd);
-  // Colorful rug
+  
   put(bx(10.4,.04,8.4,ms(0x2a5a2a,.5)),CX,.02,CZ);put(bx(10,.04,8,ms(0x3a4a2a,.9)),CX,.03,CZ);
-  // Dart board
+  
   const dw=new THREE.Mesh(new THREE.CircleGeometry(.58,18),ms(0xf5deb3,.8));dw.rotation.y=-Math.PI/2;dw.position.set(-7.82,2.8,CZ-3);scene.add(dw);
   const dwr=new THREE.Mesh(new THREE.TorusGeometry(.58,.06,8,16),ms(0x2a1a0a,.5,.3));dwr.rotation.y=-Math.PI/2;dwr.position.set(-7.82,2.8,CZ-3);scene.add(dwr);
   [.42,.3,.2,.1].forEach((r,i)=>{const rng=new THREE.Mesh(new THREE.TorusGeometry(r,.04,6,14),ms([0xc80000,0x1a2a1a,0xc80000,0xf0f0f0][i],.7));rng.rotation.y=-Math.PI/2;rng.position.set(-7.82,2.8,CZ-3);scene.add(rng)});
-  // Chess table
+  
   put(bx(1.6,.1,1.6,ms(0x3a2808,.8)),CX+3,1.03,CZ+3);put(cy(.12,.12,1.03,8,dwM),CX+3,.515,CZ+3);
   for(let r=0;r<4;r++)for(let col=0;col<4;col++){put(bx(.36,.02,.36,ms((r+col)%2===0?0xf5f5dc:0x3a2010,.9)),CX+3-.54+col*.36+.18,.11,CZ+3-.54+r*.36+.18)};
-  // Treasure chest
+  
   put(bx(1.3,.72,.9,wdM),CX-4,.36,CZ+4);put(bx(1.3,.32,.9,ms(0x6a3a10,.8)),CX-4,.9,CZ+4,-.28);put(bx(.22,.22,.1,goM.clone()),CX-4,.7,CZ+3.57);
-  // Spinning top
   put(cy(.28,0,.45,8,ms(0xff4444,.6)),4,1.06,CZ-4);
-  // Arcade machines for external games
-  // Clicker Heroes machine (left wall)
+  
   put(bx(1.2,2.2,.5,ms(0x1a1a6a,.8)),-6,1.1,CZ-5);put(bx(1,.06,.42,ms(0xc8922a,.3,.85)),-6,2.26,CZ-5);
   const ch_screen=bx(.85,1.1,.04,ms(0x0a1a3a,.2,0,0x4466ff,1.2));put(ch_screen,-6,1.3,CZ-4.74);
   put(bx(.9,.08,.08,ms(0xc8922a,.3,.85)),-6,2.2,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),-6.48,1.1,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),-5.52,1.1,CZ-4.74);
   const chL=new THREE.PointLight(0x4466ff,1.2,3);chL.position.set(-6,1.8,CZ-4.5);scene.add(chL);TORCHES.push({li:chL,fl:null,base:1.2,t:1});
-  // 2048 machine (right wall)
+  
   put(bx(1.2,2.2,.5,ms(0x6a1a1a,.8)),6,1.1,CZ-5);put(bx(1,.06,.42,ms(0xc8922a,.3,.85)),6,2.26,CZ-5);
   const g2048_screen=bx(.85,1.1,.04,ms(0x1a0a08,.2,0,0xff8844,1.2));put(g2048_screen,6,1.3,CZ-4.74);
   put(bx(.9,.08,.08,ms(0xc8922a,.3,.85)),6,2.2,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),5.52,1.1,CZ-4.74);put(bx(.08,.08,.42,ms(0xc8922a,.3,.85)),6.48,1.1,CZ-4.74);
   const g2L=new THREE.PointLight(0xff8844,1.2,3);g2L.position.set(6,1.8,CZ-4.5);scene.add(g2L);TORCHES.push({li:g2L,fl:null,base:1.2,t:2});
-  // Fireboy & Watergirl machine (back center)
+  
   put(bx(1.4,2.4,.5,ms(0x1a3a1a,.8)),0,1.2,CZ+6.5);put(bx(1.2,.06,.45,ms(0xc8922a,.3,.85)),0,2.46,CZ+6.5);
   const fw_screen=bx(1,.15,.04,ms(0x080a08,.2,0,0x44ffaa,.9));put(fw_screen,0,1.5,CZ+6.22);
   const fwL=new THREE.PointLight(0x44ffaa,.9,3);fwL.position.set(0,1.8,CZ+6);scene.add(fwL);TORCHES.push({li:fwL,fl:null,base:.9,t:3});
-  // Signs above machines
+  
   put(bx(.9,.04,.28,ms(0xc8922a,.3,.85)),-6,2.38,CZ-4.74);put(bx(.9,.04,.28,ms(0xc8922a,.3,.85)),6,2.38,CZ-4.74);put(bx(1.05,.04,.32,ms(0xc8922a,.3,.85)),0,2.58,CZ+6.22);
   torch(-7.7,3.2,CZ-4);torch(-7.7,3.2,CZ+4);torch(7.7,3.2,CZ-4);torch(7.7,3.2,CZ+4);
+  
   IACTS.push({x:0,z:CZ-3.5,r:2,label:'[E] Play Darts',game:'darts'});
   IACTS.push({x:CX-4,z:CZ+4,r:1.8,label:'[E] Open Treasure Chest',game:'catch'});
   IACTS.push({x:CX+3,z:CZ+3,r:1.8,label:'[E] Chess Memory',game:'memory'});
@@ -287,19 +271,20 @@ function drawTimer(){
   const CW=512,CH=512;TCT.clearRect(0,0,CW,CH);
   const bg=TCT.createLinearGradient(0,0,0,CH);bg.addColorStop(0,'#1c0e06');bg.addColorStop(.5,'#130a04');bg.addColorStop(1,'#0d0703');
   TCT.fillStyle=bg;TCT.fillRect(0,0,CW,CH);
-  // Outer border
+  
   TCT.strokeStyle='#c8922a';TCT.lineWidth=10;TCT.strokeRect(6,6,CW-12,CH-12);
   TCT.strokeStyle='#e8c060';TCT.lineWidth=2.5;TCT.strokeRect(18,18,CW-36,CH-36);
-  // Corner gems
+  
   [[26,26],[CW-26,26],[26,CH-26],[CW-26,CH-26]].forEach(([ox,oy])=>{
     TCT.fillStyle='#c8922a';TCT.beginPath();TCT.arc(ox,oy,7,0,Math.PI*2);TCT.fill();
     TCT.strokeStyle='rgba(232,192,96,.4)';TCT.lineWidth=1;TCT.beginPath();TCT.arc(ox,oy,14,0,Math.PI*2);TCT.stroke();
   });
-  // Crown
+  
   TCT.font='58px serif';TCT.textAlign='center';TCT.fillText('\uD83D\uDC51',CW/2,78);
   TCT.fillStyle='rgba(200,168,80,.72)';TCT.font='italic 17px Georgia,serif';TCT.fillText('\u2736  THE KINGDOM AWAITS  \u2736',CW/2,108);
-  TCT.fillStyle='rgba(200,168,80,.72)';TCT.font='italic 17px Georgia,serif';TCT.fillText('\u2736  THERES A PRETTY TRYING TO PEEP, BUT ALAS! THE SERVER DO NOT UNDERSTAND BEAUTY  \u2736',CW/2,108);
-  TCT.strokeStyle='rgba(200,146,42,.3)';TCT.lineWidth=1;TCT.beginPath();TCT.moveTo(44,122);TCT.lineTo(CW-44,122);TCT.stroke();
+  TCT.fillStyle='rgba(200,168,80,.72)';TCT.font='italic 13px Georgia,serif';TCT.fillText('\u2736  THERE IS A PRETTY PRINCESS TRYING TO PEEP, BUT ALAS! THE SERVER DOES NOT UNDERSTAND BEAUTY  \u2736',CW/2,130);
+  TCT.strokeStyle='rgba(200,146,42,.3)';TCT.lineWidth=1;TCT.beginPath();TCT.moveTo(44,145);TCT.lineTo(CW-44,145);TCT.stroke();
+  
   if(!isBday(getIST())){
     const cd=cdData();
     TCT.shadowColor='rgba(232,192,96,.55)';TCT.shadowBlur=26;
@@ -315,6 +300,7 @@ function drawTimer(){
     TCT.fillStyle='#e8c060';TCT.font='bold 40px Georgia,serif';TCT.fillText('Happy Birthday',CW/2,240);
     TCT.font='52px serif';TCT.fillText('\uD83D\uDC51',CW/2,308);
   }
+  
   TCT.strokeStyle='rgba(200,146,42,.28)';TCT.lineWidth=1;TCT.beginPath();TCT.moveTo(44,440);TCT.lineTo(CW-44,440);TCT.stroke();
   TCT.fillStyle='rgba(200,168,98,.58)';TCT.font='italic 17px Georgia,serif';TCT.fillText('for princess tanya',CW/2,465);
   TCT.fillStyle='rgba(232,192,96,.45)';TCT.font='18px serif';TCT.fillText('\u2736',78,465);TCT.fillText('\u2736',CW-78,465);
@@ -329,29 +315,28 @@ function buildGate(){
   put(bx(5.5,.55,.5,aM),0,WH+.22,GZ);
   for(let a=0;a<=Math.PI;a+=Math.PI/8){const seg=bx(.5,.5,.5,aM);seg.position.set(Math.cos(a)*2.35,WH+.26+Math.sin(a)*1.52,GZ);scene.add(seg)}
   const dM=ms(0x4a2808,.9);
-  // Left door pivot at x=-2
+  
   doorPL=new THREE.Group();doorPL.position.set(-2,DH/2,GZ);
   const dL=bx(2,DH,.14,dM);dL.position.set(1,0,0);
   for(let y=-DH/2+.4;y<DH/2;y+=.72){const pk=bx(1.88,.08,.02,ms(0x3a1808,.95));pk.position.set(1,y,.08);dL.add(pk)}
   const rlL=new THREE.Mesh(new THREE.TorusGeometry(.14,.034,8,14),ms(0xc89030,.3,.9));rlL.position.set(.62,0,.1);dL.add(rlL);
   doorPL.add(dL);scene.add(doorPL);
-  // Right door pivot at x=2
+  
   doorPR=new THREE.Group();doorPR.position.set(2,DH/2,GZ);
   const dR=bx(2,DH,.14,dM);dR.position.set(-1,0,0);
   for(let y=-DH/2+.4;y<DH/2;y+=.72){const pk=bx(1.88,.08,.02,ms(0x3a1808,.95));pk.position.set(-1,y,.08);dR.add(pk)}
   const rlR=new THREE.Mesh(new THREE.TorusGeometry(.14,.034,8,14),ms(0xc89030,.3,.9));rlR.position.set(-.62,0,.1);dR.add(rlR);
   doorPR.add(dR);scene.add(doorPR);
-  // Outside dark wall
+  
   put(bx(16,WH,.06,ms(0x030108,.99)),0,WH/2,GZ+.22);
-  // ── TIMER PLANE on the gate (player-facing, inside surface) ──
+  
   const timerMesh=new THREE.Mesh(new THREE.PlaneGeometry(3.9,3.9),new THREE.MeshBasicMaterial({map:timerTex,transparent:true,side:THREE.DoubleSide}));
   timerMesh.position.set(0,DH/2,GZ-.1);
-  timerMesh.rotation.y=Math.PI; // face toward player (who approaches from z<GATE_Z)
+  timerMesh.rotation.y=Math.PI; 
   scene.add(timerMesh);
-  // Warm ambient glow on gate area
+  
   const gL=new THREE.PointLight(0xffdd88,.9,7);gL.position.set(0,2,GZ-1.5);scene.add(gL);
   TORCHES.push({li:gL,fl:null,base:.9,t:2});
-  // Gate collider
   addCol(-2.35,2.35,GZ-.2,GZ+.2);
   drawTimer();setInterval(drawTimer,1000);
 }
@@ -369,6 +354,7 @@ document.addEventListener('mousemove',e=>{if(!dlook||gameActive)return;player.ya
 canvas.addEventListener('touchstart',e=>{dlook=true;dlx=e.touches[0].clientX;dly=e.touches[0].clientY},{passive:true});
 canvas.addEventListener('touchmove',e=>{if(!dlook||gameActive)return;player.yaw-=(e.touches[0].clientX-dlx)*.004;player.pitch-=(e.touches[0].clientY-dly)*.003;player.pitch=Math.max(-.65,Math.min(.6,player.pitch));dlx=e.touches[0].clientX;dly=e.touches[0].clientY},{passive:true});
 canvas.addEventListener('touchend',()=>dlook=false);
+
 // Joysticks
 const joy={l:{dx:0,dy:0},r:{dx:0,dy:0}};
 function setupJoy(eId,kId,side){
@@ -448,12 +434,11 @@ document.getElementById('gcl').onclick=closeG;
 function launchGame(t){
   if(t==='clicker')return launchExtGame('Clicker Heroes','https://cdn.clickerheroes.com/gamebuild/index.php','clicker');
   if(t==='g2048')return launchExtGame('2048','https://play2048.co/','g2048');
-  if(t==='fbwg')return launchExtGame('Fireboy & Watergirl','https://www.coolmathgames.com/0-fireboy-and-watergirl-in-the-forest-temple','fbwg');
+  if(t==='fbwg')return launchExtGame('Fireboy & Watergirl','https://amhooman.github.io/fireboywatergirl/game.html');
   ({riddle:gameRiddle,memory:gameMemory,potion:gamePotion,fortune:gameFortune,quiz:gameQuiz,darts:gameDarts,catch:gameCatch})[t]?.();
 }
 
 function launchExtGame(title, url, type){
-  // Close mini-game overlay if open
   document.getElementById('go').style.display='none';
   gameActive=true;
   document.getElementById('jl').style.opacity='0';
@@ -464,7 +449,6 @@ function launchExtGame(title, url, type){
   overlay.id='ext-overlay';
   overlay.style.cssText='position:fixed;inset:0;z-index:800;background:#000;display:flex;flex-direction:column;font-family:Cinzel,serif';
 
-  // Top bar
   const bar=document.createElement('div');
   bar.style.cssText='padding:8px 16px;background:#0a0604;border-bottom:1px solid rgba(232,192,96,.2);display:flex;justify-content:space-between;align-items:center;flex-shrink:0';
   bar.innerHTML='<span style="color:#e8c060;font-size:.72rem;letter-spacing:2px">✦ '+title+' ✦</span>';
@@ -475,7 +459,6 @@ function launchExtGame(title, url, type){
   bar.appendChild(closeBtn);
   overlay.appendChild(bar);
 
-  // iframe
   const frame=document.createElement('iframe');
   frame.src=url;
   frame.style.cssText='flex:1;border:none;width:100%;background:#111';
@@ -483,7 +466,6 @@ function launchExtGame(title, url, type){
   frame.setAttribute('allowfullscreen','');
   overlay.appendChild(frame);
 
-  // Blocked notice (shown if iframe fails)
   const notice=document.createElement('div');
   notice.id='iframe-notice';
   notice.style.cssText='position:absolute;inset:0;top:42px;display:none;flex-direction:column;align-items:center;justify-content:center;background:#050208;gap:14px;pointer-events:none';
@@ -494,7 +476,6 @@ function launchExtGame(title, url, type){
   openBtn.onclick=()=>window.open(url,'_blank');
   notice.appendChild(openBtn);overlay.appendChild(notice);
 
-  // Detect iframe block after 4s
   frame.onerror=()=>{notice.style.display='flex'};
   setTimeout(()=>{try{const t2=frame.contentWindow?.location?.href;if(!t2||t2==='about:blank'){notice.style.display='flex'}}catch(e){notice.style.display='flex'}},4000);
 
@@ -510,7 +491,7 @@ function gameRiddle(){
   const inp=document.createElement('input');inp.style.cssText='background:rgba(255,255,255,.06);border:1px solid rgba(232,192,96,.3);border-radius:20px;padding:8px 18px;color:#e8c060;font-family:Cinzel,serif;font-size:.82rem;text-align:center;outline:none;width:210px;letter-spacing:1px';inp.placeholder='your answer...';qw.appendChild(inp);
   const btn=document.createElement('button');btn.style.cssText='margin-top:7px;padding:8px 22px;background:transparent;border:1px solid rgba(232,192,96,.4);color:#e8c060;font-family:Cinzel,serif;font-size:.68rem;letter-spacing:2px;border-radius:20px;cursor:pointer';btn.textContent='✦ Submit';qw.appendChild(btn);
   const gm=document.getElementById('gm');
-  btn.onclick=()=>{const a=inp.value.trim().toLowerCase();if(a===r.a||r.a.split(' ').includes(a)&&a.length>2){gm.style.color='#80c880';gm.textContent='✦ Correct! You are wise beyond measure, Princess! ✦';btn.disabled=true}else{gm.style.color='#c08080';gm.textContent='Not quite... try again 🤔';inp.value='';inp.focus()}};
+  btn.onclick=()=>{const a=inp.value.trim().toLowerCase();if(a===r.a||(r.a.split(' ').includes(a)&&a.length>2)){gm.style.color='#80c880';gm.textContent='✦ Correct! You are wise beyond measure, Princess! ✦';btn.disabled=true}else{gm.style.color='#c08080';gm.textContent='Not quite... try again 🤔';inp.value='';inp.focus()}};
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click()});
 }
 
@@ -612,13 +593,75 @@ const llght=new THREE.PointLight(0xaabeff,0,500);llght.position.set(0,200,100);o
 let ltTimer=0;
 
 // ═══════════════ CONSTELLATIONS ════════════════════════════════
-const CONSTS=[{name:'Scorpius',color:'#ff6b6b',stars:[[50,20],[55,35],[60,50],[58,65],[50,75],[42,80],[35,75],[30,65],[40,55],[35,40]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[2,8],[8,9]],desc:'The Scorpion blazes in the south \u2014 Antares, its heart, burns 700\xd7 the size of our Sun.',bless:'\u2736 Ancient fire burns as bright as your spirit, Princess.'},{name:'Corona Borealis',color:'#c8f0ff',stars:[[30,50],[40,35],[50,30],[60,35],[70,50],[65,65],[35,65]],lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]],desc:'A perfect crown of seven stars \u2014 the universe\'s own tiara arcing overhead.',bless:'\u2736 The cosmos crowned you with real stars. \uD83D\uDC51'},{name:'Virgo',color:'#ffe4b5',stars:[[50,15],[45,30],[55,30],[35,45],[65,45],[40,60],[60,60],[50,75]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],desc:'The celestial maiden graces the western sky, Spica blazing brilliant blue-white.',bless:'\u2736 The maiden\'s grace mirrors yours, dear Princess.'},{name:'Bo\xf6tes',color:'#ffa07a',stars:[[50,10],[40,25],[60,25],[35,45],[65,45],[45,60],[55,60]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6]],desc:'Arcturus, fourth brightest in the night sky, blazes orange-red from the summit.',bless:'\u2736 Arcturus watches over your kingdom tonight.'},{name:'Libra',color:'#a8d8a8',stars:[[50,30],[35,50],[65,50],[40,70],[60,70]],lines:[[0,1],[0,2],[1,3],[2,4],[3,4]],desc:'The Scales of Balance shine high \u2014 justice and harmony reign in the sky.',bless:'\u2736 May balance and peace be your crown this year.'},{name:'Leo',color:'#ffd700',stars:[[50,10],[38,20],[62,20],[30,35],[70,35],[45,50],[55,50],[50,65]],lines:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],desc:'The Lion descends westward, Regulus blazing at his royal heart.',bless:'\u2736 Leo\'s royal heart beats for those born to be queens.'}];
+const CONSTS=[
+  {
+    name: 'Scorpius', color: '#ff6b6b', 
+    stars: [[50,20],[55,35],[60,50],[58,65],[50,75],[42,80],[35,75],[30,65],[40,55],[35,40]], 
+    lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[2,8],[8,9]], 
+    desc: 'The Scorpion blazes in the southern sky. Its heart, Antares, burns 700 times brighter than our own Sun, a beacon of raw, ancient power.', 
+    bless: '✦ Like the ancient fire of Antares, your spirit burns bright and fearless. Never lose that spark, Princess.'
+  },
+  {
+    name: 'Corona Borealis', color: '#c8f0ff', 
+    stars: [[30,50],[40,35],[50,30],[60,35],[70,50],[65,65],[35,65]], 
+    lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]], 
+    desc: 'A perfect crown of seven stars—the universe\'s own jeweled tiara arcing gracefully overhead in the quiet of the night.', 
+    bless: '✦ The cosmos itself has woven a crown of real stars just for you. Wear it with pride. 👑'
+  },
+  {
+    name: 'Virgo', color: '#ffe4b5', 
+    stars: [[50,15],[45,30],[55,30],[35,45],[65,45],[40,60],[60,60],[50,75]], 
+    lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]], 
+    desc: 'The celestial maiden graces the western heavens, with Spica blazing in brilliant blue-white radiance to guide the lost.', 
+    bless: '✦ The maiden\'s quiet grace and radiant beauty perfectly mirror your own, dear Princess.'
+  },
+  {
+    name: 'Boötes', color: '#ffa07a', 
+    stars: [[50,10],[40,25],[60,25],[35,45],[65,45],[45,60],[55,60]], 
+    lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6]], 
+    desc: 'Arcturus, the fourth brightest star in the night sky, stands as a fiery orange-red guardian at the celestial summit.', 
+    bless: '✦ Arcturus watches over your kingdom tonight, ensuring your path is always guided by light.'
+  },
+  {
+    name: 'Libra', color: '#a8d8a8', 
+    stars: [[50,30],[35,50],[65,50],[40,70],[60,70]], 
+    lines: [[0,1],[0,2],[1,3],[2,4],[3,4]], 
+    desc: 'The Scales of Balance shine high above, a celestial promise that justice, harmony, and peace will always reign.', 
+    bless: '✦ May perfect balance, inner peace, and endless joy be the jewels in your crown this year.'
+  },
+  {
+    name: 'Leo', color: '#ffd700', 
+    stars: [[50,10],[38,20],[62,20],[30,35],[70,35],[45,50],[55,50],[50,65]], 
+    lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]], 
+    desc: 'The majestic Lion descends westward, with Regulus blazing fiercely at his royal heart, commanding the night.', 
+    bless: '✦ Leo\'s brave and royal heart beats in sync with yours—for you were truly born to be a queen.'
+  }
+];
+
 function showConst(){
   const panel=document.getElementById('cp'),grid=document.getElementById('cgr');grid.innerHTML='';panel.style.display='flex';
   CONSTS.forEach((c,i)=>{const card=document.createElement('div');card.className='cc';const cv2=document.createElement('canvas');cv2.width=116;cv2.height=116;const ct2=cv2.getContext('2d');const s=116;ct2.fillStyle='#030818';ct2.fillRect(0,0,s,s);ct2.strokeStyle=c.color+'50';ct2.lineWidth=.7;c.lines.forEach(([a,b])=>{ct2.beginPath();ct2.moveTo(c.stars[a][0]*s/100,c.stars[a][1]*s/100);ct2.lineTo(c.stars[b][0]*s/100,c.stars[b][1]*s/100);ct2.stroke()});c.stars.forEach(([px,py],si)=>{const sx2=px*s/100,sy2=py*s/100,sr2=si===0?3:1.7;const g=ct2.createRadialGradient(sx2,sy2,0,sx2,sy2,sr2*2.5);g.addColorStop(0,c.color);g.addColorStop(1,'transparent');ct2.beginPath();ct2.arc(sx2,sy2,sr2*2.5,0,Math.PI*2);ct2.fillStyle=g;ct2.fill();ct2.beginPath();ct2.arc(sx2,sy2,sr2*.45,0,Math.PI*2);ct2.fillStyle='#fff';ct2.fill()});card.appendChild(cv2);const nm=document.createElement('div');nm.className='cn';nm.textContent=c.name;card.appendChild(nm);const dc2=document.createElement('div');dc2.className='cd2';dc2.textContent=c.desc;card.appendChild(dc2);const bl=document.createElement('div');bl.className='cb2';bl.textContent=c.bless;card.appendChild(bl);grid.appendChild(card);setTimeout(()=>card.classList.add('s'),i*115)});
   document.getElementById('cclose').onclick=()=>{panel.style.display='none';showAfterConst()};
 }
-function showAfterConst(){const c=document.getElementById('bc');c.querySelector('.bbt')?.remove();let d=0;[['bdv',''],['bli','On this beautiful day, the stars aligned just to see you smile.'],['bli','You carry warmth that makes every room feel like home, and a spirit that makes every adventure worth it.'],['bli','The world is genuinely brighter because you\'re in it, Tanya. \uD83C\uDF1F'],['bhi','Bas khush reh. Healthy reh. Aur princess wali vibes kabhi mat chhodna. \uD83D\uDC51'],['bti','Happy Birthday, Princess. \u2728']].forEach(([cls,text])=>{if(cls==='bdv'){c.appendChild(Object.assign(document.createElement('div'),{className:'bdv'}));d+=.3;return}const el=Object.assign(document.createElement('div'),{className:cls,textContent:text});c.appendChild(el);setTimeout(()=>el.classList.add('s'),d*1000+50);d+=.7})}
+
+function showAfterConst(){
+  const c=document.getElementById('bc');c.querySelector('.bbt')?.remove();let d=0;
+  [
+    ['bdv',''],
+    ['bli','On this beautiful day, the stars didn\'t just align—they danced, celebrating the moment you came into this world.'],
+    ['bli','You carry a warmth that makes every room feel like home, and a beautiful spirit that turns ordinary moments into unforgettable adventures.'],
+    ['bli','The world is genuinely so much brighter because you\'re in it, Tanya. Your kindness is a magic of its own. 🌟'],
+    ['bhi','Meri bas yahi wish hai ki tu hamesha khush reh, aur healthy reh. Tere hisse ki saari khushiyan tujhe mil jayein.'],
+    ['bhi','Life mein chahe kuch bhi ho, apni wo pyari si smile aur apni wo "princess" wali vibes kabhi mat chhodna. 👑'],
+    ['bli','You deserve all the magic, love, and light this universe has to offer.'],
+    ['bti','Happy Birthday, Princess. May your reign be long and full of joy. ✨']
+  ].forEach(([cls,text])=>{
+    if(cls==='bdv'){c.appendChild(Object.assign(document.createElement('div'),{className:'bdv'}));d+=.3;return}
+    const el=Object.assign(document.createElement('div'),{className:cls,textContent:text});
+    c.appendChild(el);
+    setTimeout(()=>el.classList.add('s'),d*1000+50);d+=.7
+  })
+}
 
 // ═══════════════ BIRTHDAY MESSAGE ═════════════════════════════
 function showBday(){
@@ -628,13 +671,25 @@ function showBday(){
   document.getElementById('rl').style.display='none';document.getElementById('mm').style.display='none';
   setTimeout(()=>{document.getElementById('bb').classList.add('v');buildBdayMsg()},1200);
 }
+
 function buildBdayMsg(){
   const ist=getIST(),win=tWin(ist),c=document.getElementById('bc');c.innerHTML='';let d=0;
   const add=(cls,text,delay)=>{if(cls==='bdv'){c.appendChild(Object.assign(document.createElement('div'),{className:'bdv'}));return}if(cls==='bbt'){const btn=Object.assign(document.createElement('button'),{className:'bbt',textContent:'\u2736 Dekh Aasman Mein \u2736'});btn.onclick=showConst;c.appendChild(btn);setTimeout(()=>btn.classList.add('s'),delay*1000+50);return}const el=Object.assign(document.createElement('div'),{className:cls,textContent:text});c.appendChild(el);setTimeout(()=>el.classList.add('s'),delay*1000+50)};
-  if(win==='mid'){add('bhi','tu abhi tak soi nahi\uD83E\uDD28??',0);add('bhi','Apne tabyat ka to khayal rakh.',1);add('bti','Happy Birthday, Princess Tanya \uD83D\uDC51',2);add('bdv','',2.5);add('bhi','chal Tereko kuch mast bata ta hu \u2728',3);add('bbt','',3.8);d=4.5}
-  else if(win==='morn'){add('bhi','tu uth gayi\uD83E\uDD28??',0);add('bti','Happy Birthday, Princess Tanya \uD83D\uDC51',1);add('bdv','',1.6);d=2.2}
+  
+  if(win==='mid'){add('bhi','Tu abhi tak soi nahi??🤨',0);add('bhi','Apne tabyat ka to khayal rakh.',1);add('bti','Happy Birthday, Princess Tanya \uD83D\uDC51',2);add('bdv','',2.5);add('bhi','Chal Tereko kuch mast bata ta hu \u2728',3);add('bbt','',3.8);d=4.5}
+  else if(win==='morn'){add('bhi','Tu uth gayi??🤨',0);add('bti','Happy Birthday, Princess Tanya \uD83D\uDC51',1);add('bdv','',1.6);d=2.2}
   else{add('bti','Happy Birthday \uD83C\uDF82',0);add('bti','Princess Tanya \uD83D\uDC51',1);add('bdv','',1.6);d=2.2}
-  if(win!=='mid')[[d,'bli','On this beautiful day, the stars aligned just to see you smile.'],[d+.8,'bli','You carry warmth that makes every room feel like home, and a spirit that makes every adventure worth it.'],[d+1.6,'bli','The world is genuinely brighter because you\'re in it, Tanya. \uD83C\uDF1F'],[d+2.4,'bhi','Bas khush reh. Healthy reh. Aur princess wali vibes kabhi mat chhodna. \uD83D\uDC51'],[d+3.2,'bti','Happy Birthday, Princess. \u2728']].forEach(([dl,cls,t])=>add(cls,t,dl));
+  
+  if(win!=='mid'){
+    [[d, 'bli', 'On this beautiful day, the stars didn\'t just align—they danced, celebrating the moment you came into this world.'],
+     [d+.9, 'bli', 'You carry a warmth that makes every room feel like home, and a beautiful spirit that turns ordinary moments into unforgettable adventures.'],
+     [d+1.8, 'bli', 'The world is genuinely so much brighter because you\'re in it, Tanya. Your kindness is a magic of its own. 🌟'],
+     [d+2.7, 'bhi', 'Meri bas yahi wish hai ki tu hamesha khush reh, aur healthy reh. Tere hisse ki saari khushiyan tujhe mil jayein.'],
+     [d+3.6, 'bhi', 'Life mein chahe kuch bhi ho, apni wo pyari si smile aur apni wo "princess" wali vibes kabhi mat chhodna. 👑'],
+     [d+4.5, 'bli', 'You deserve all the magic, love, and light this universe has to offer.'],
+     [d+5.4, 'bti', 'Happy Birthday, Princess. May your reign be long and full of joy. ✨']
+    ].forEach(([dl,cls,t])=>add(cls,t,dl));
+  }
 }
 
 // ═══════════════ MAIN LOOP ════════════════════════════════════
@@ -645,7 +700,7 @@ function animate(){
     if(!gameActive)movePlayer();
     camera.position.set(player.x,player.y,player.z);
     camera.rotation.y=player.yaw;camera.rotation.x=player.pitch;
-    // Gate door animation
+    
     if(gateOpen){gateAng=Math.min(gateAng+.016,Math.PI*.65);doorPL.rotation.y=gateAng;doorPR.rotation.y=-gateAng;
       if(gateAng>=Math.PI*.65&&!outMode){
         document.getElementById('fl').style.background='rgba(255,230,150,.65)';
@@ -653,7 +708,7 @@ function animate(){
         setTimeout(startTransition,1400);gateOpen=false;
       }
     }
-    // Torch flicker
+    
     TORCHES.forEach((t,i)=>{t.t+=dt;const fl=Math.sin(t.t*8+i*2.1)*.18+Math.sin(t.t*13+i)*.1;if(t.li)t.li.intensity=t.base*(0.88+fl);if(t.fl){t.fl.scale.y=.93+Math.sin(t.t*7.5+i)*.1;t.fl.scale.x=.97+Math.sin(t.t*9+i)*.07}});
     checkInteracts();checkRoom();
     renderer.render(scene,camera);renderMM();
