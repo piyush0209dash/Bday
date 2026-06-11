@@ -51,3 +51,27 @@ body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:'Cinze
 .cb2{color:#e8c060;font-size:.73rem;margin-top:6px;text-align:center;font-style:italic;font-family:'Lato',sans-serif}
 #cclose{margin-top:20px;padding:8px 26px;background:transparent;border:1px solid #e8c060;color:#e8c060;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:2px;border-radius:28px;cursor:pointer;flex-shrink:0}
 #fl{position:fixed;inset:0;background:rgba(255,230,150,0);pointer-events:none;z-index:990;transition:background .25s}
+/* Add to the bottom of your CSS file */
+#audio-btn {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  width: 44px;
+  height: 44px;
+  background: rgba(5, 2, 10, 0.6);
+  border: 1px solid rgba(232, 192, 96, 0.4);
+  color: #e8c060;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+#audio-btn:hover {
+  background: rgba(232, 192, 96, 0.15);
+  border-color: #e8c060;
+}
