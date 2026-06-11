@@ -599,42 +599,42 @@ const CONSTS=[
     stars: [[50,20],[55,35],[60,50],[58,65],[50,75],[42,80],[35,75],[30,65],[40,55],[35,40]], 
     lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[2,8],[8,9]], 
     desc: 'The Scorpion blazes in the southern sky. Its heart, Antares, burns 700 times brighter than our own Sun, a beacon of raw, ancient power.', 
-    bless: '✦ Like the ancient fire of Antares, your spirit burns bright and fearless. Never lose that spark, Princess.'
+    bless: '✦ Like the ancient fire of Antares, your spirit burns bright, fierce, and utterly impossible to ignore. In every room you walk into you carry that same raw, radiant power—the kind that turns heads and warms hearts all at once. Never let anyone dim that flame, Princess. It was made to light the world.'
   },
   {
     name: 'Corona Borealis', color: '#c8f0ff', 
     stars: [[30,50],[40,35],[50,30],[60,35],[70,50],[65,65],[35,65]], 
     lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]], 
     desc: 'A perfect crown of seven stars—the universe\'s own jeweled tiara arcing gracefully overhead in the quiet of the night.', 
-    bless: '✦ The cosmos itself has woven a crown of real stars just for you. Wear it with pride. 👑'
+    bless: '✦ The cosmos itself paused and wove seven perfect stars into a crown—not for any ruler of legend, but for you, on this very night. It hangs in the sky right now, visible to all who look up, silently declaring that the universe already knows your worth. You were always the one it was made for. 👑'
   },
   {
     name: 'Virgo', color: '#ffe4b5', 
     stars: [[50,15],[45,30],[55,30],[35,45],[65,45],[40,60],[60,60],[50,75]], 
     lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]], 
     desc: 'The celestial maiden graces the western heavens, with Spica blazing in brilliant blue-white radiance to guide the lost.', 
-    bless: '✦ The maiden\'s quiet grace and radiant beauty perfectly mirror your own, dear Princess.'
+    bless: '✦ Virgo is not just grace—she is wisdom wrapped in warmth, a quiet strength that never needs to announce itself. That is you, Tanya. Your kindness is never small or ordinary; it leaves a lasting mark on every person you meet, long after the moment has passed. May this year return to you every ounce of the beauty you so freely give to others.'
   },
   {
     name: 'Boötes', color: '#ffa07a', 
     stars: [[50,10],[40,25],[60,25],[35,45],[65,45],[45,60],[55,60]], 
     lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6]], 
     desc: 'Arcturus, the fourth brightest star in the night sky, stands as a fiery orange-red guardian at the celestial summit.', 
-    bless: '✦ Arcturus watches over your kingdom tonight, ensuring your path is always guided by light.'
+    bless: '✦ Arcturus has burned for over seven billion years—longer than our Earth has existed—and yet tonight it turns its ancient light directly toward you. The universe has always kept a guardian for those who truly deserve one, and yours has been watching faithfully all this time. May you always feel that steady, patient light at your back. ✦'
   },
   {
     name: 'Libra', color: '#a8d8a8', 
     stars: [[50,30],[35,50],[65,50],[40,70],[60,70]], 
     lines: [[0,1],[0,2],[1,3],[2,4],[3,4]], 
     desc: 'The Scales of Balance shine high above, a celestial promise that justice, harmony, and peace will always reign.', 
-    bless: '✦ May perfect balance, inner peace, and endless joy be the jewels in your crown this year.'
+    bless: '✦ The Scales seek those rare souls with the gift of true balance—strong enough to hold others up, yet gentle enough to never let them fall. That is a grace you carry so naturally, Tanya. May this year restore your own equilibrium too, and fill every corner of your life with the peace, love, and joy you so quietly deserve.'
   },
   {
     name: 'Leo', color: '#ffd700', 
     stars: [[50,10],[38,20],[62,20],[30,35],[70,35],[45,50],[55,50],[50,65]], 
     lines: [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]], 
     desc: 'The majestic Lion descends westward, with Regulus blazing fiercely at his royal heart, commanding the night.', 
-    bless: '✦ Leo\'s brave and royal heart beats in sync with yours—for you were truly born to be a queen.'
+    bless: '✦ Leo does not ask permission to shine—it simply does, without apology or hesitation. Regulus has blazed at that lion\'s heart since before human eyes could name it, and tonight it blazes in recognition of yours. You were not made to be ordinary, Tanya. You were made to reign—and every star in this sky already knows it.'
   }
 ];
 
@@ -646,15 +646,20 @@ function showConst(){
 
 function showAfterConst(){
   const c=document.getElementById('bc');c.querySelector('.bbt')?.remove();let d=0;
-  [
+[
     ['bdv',''],
-    ['bli','On this beautiful day, the stars didn\'t just align—they danced, celebrating the moment you came into this world.'],
-    ['bli','You carry a warmth that makes every room feel like home, and a beautiful spirit that turns ordinary moments into unforgettable adventures.'],
-    ['bli','The world is genuinely so much brighter because you\'re in it, Tanya. Your kindness is a magic of its own. 🌟'],
-    ['bhi','Meri bas yahi wish hai ki tu hamesha khush reh, aur healthy reh. Tere hisse ki saari khushiyan tujhe mil jayein.'],
-    ['bhi','Life mein chahe kuch bhi ho, apni wo pyari si smile aur apni wo "princess" wali vibes kabhi mat chhodna. 👑'],
-    ['bli','You deserve all the magic, love, and light this universe has to offer.'],
-    ['bti','Happy Birthday, Princess. May your reign be long and full of joy. ✨']
+    ['bli','On this beautiful day, the stars didn\'t just align—they danced, celebrating the exact moment you came into this world.'],
+    ['bli','You carry a warmth that makes every room feel like home, and a spirit so bright it turns ordinary moments into memories worth keeping forever.'],
+    ['bli','The world is genuinely so much better because you\'re in it, Tanya. Your kindness isn\'t small—it echoes. 🌟'],
+    ['bdv',''],
+    ['bhi','Tujhe dekh ke aisa lagta hai ki kuch log duniya mein honestly sirf khushiyan baantne ke liye aate hain—aur tu unme se ek hai.'],
+    ['bhi','Meri bas yahi dua hai ki tu hamesha khush rahe, healthy rahe, aur jo bhi sapne hain tere—wo sab poore hon. 🌸'],
+    ['bhi','Aur life mein chahe kuch bhi ho—apni wo pyari si smile aur apni "princess" wali vibes kabhi mat chhodna. 👑'],
+    ['bdv',''],
+    ['bli','You deserve every good thing this universe quietly holds in reserve for people like you—the ones who give more than they ever ask for.'],
+    ['bli','May this year be full of laughter that catches you off guard, moments that feel like magic, and people who love you exactly as you are.'],
+    ['bti','Happy Birthday, Princess Tanya.'],
+    ['bti','May your reign be long, bright, and full of joy. ✨']
   ].forEach(([cls,text])=>{
     if(cls==='bdv'){c.appendChild(Object.assign(document.createElement('div'),{className:'bdv'}));d+=.3;return}
     const el=Object.assign(document.createElement('div'),{className:cls,textContent:text});
@@ -681,13 +686,18 @@ function buildBdayMsg(){
   else{add('bti','Happy Birthday \uD83C\uDF82',0);add('bti','Princess Tanya \uD83D\uDC51',1);add('bdv','',1.6);d=2.2}
   
   if(win!=='mid'){
-    [[d, 'bli', 'On this beautiful day, the stars didn\'t just align—they danced, celebrating the moment you came into this world.'],
-     [d+.9, 'bli', 'You carry a warmth that makes every room feel like home, and a beautiful spirit that turns ordinary moments into unforgettable adventures.'],
-     [d+1.8, 'bli', 'The world is genuinely so much brighter because you\'re in it, Tanya. Your kindness is a magic of its own. 🌟'],
-     [d+2.7, 'bhi', 'Meri bas yahi wish hai ki tu hamesha khush reh, aur healthy reh. Tere hisse ki saari khushiyan tujhe mil jayein.'],
-     [d+3.6, 'bhi', 'Life mein chahe kuch bhi ho, apni wo pyari si smile aur apni wo "princess" wali vibes kabhi mat chhodna. 👑'],
-     [d+4.5, 'bli', 'You deserve all the magic, love, and light this universe has to offer.'],
-     [d+5.4, 'bti', 'Happy Birthday, Princess. May your reign be long and full of joy. ✨']
+    [[d,    'bli', 'On this beautiful day, the stars didn\'t just align—they danced, celebrating the exact moment you came into this world.'],
+     [d+.9, 'bli', 'You carry a warmth that makes every room feel like home, and a spirit so bright it turns ordinary moments into memories worth keeping forever.'],
+     [d+1.8,'bli', 'The world is genuinely so much better because you\'re in it, Tanya. Your kindness isn\'t small—it echoes. 🌟'],
+     [d+2.5,'bdv', ''],
+     [d+2.8,'bhi', 'Tujhe dekh ke aisa lagta hai ki kuch log duniya mein honestly sirf khushiyan baantne ke liye aate hain—aur tu unme se ek hai.'],
+     [d+3.7,'bhi', 'Meri bas yahi dua hai ki tu hamesha khush rahe, healthy rahe, aur jo bhi sapne hain tere—wo sab poore hon. 🌸'],
+     [d+4.6,'bhi', 'Aur life mein chahe kuch bhi ho—apni wo pyari si smile aur apni "princess" wali vibes kabhi mat chhodna. 👑'],
+     [d+5.3,'bdv', ''],
+     [d+5.6,'bli', 'You deserve every good thing this universe quietly holds in reserve for people like you—the ones who give more than they ever ask for.'],
+     [d+6.5,'bli', 'May this year be full of laughter that catches you off guard, moments that feel like magic, and people who love you exactly as you are.'],
+     [d+7.4,'bti', 'Happy Birthday, Princess Tanya.'],
+     [d+8.0,'bti', 'May your reign be long, bright, and full of joy. ✨']
     ].forEach(([dl,cls,t])=>add(cls,t,dl));
   }
 }
