@@ -14,9 +14,13 @@
 <body>
   <div class="stars" aria-hidden="true"></div>
   <div class="moon-glow" aria-hidden="true"></div>
+  <audio id="royal-music" loop preload="none" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=enchanted-forest-music-10143.mp3"></audio>
   <header class="topbar">
     <a class="crest" href="./" aria-label="Princess Tanya home"><span class="crest-mark">♕</span><span>Princess Tanya</span></a>
-    <a class="top-link" href="Archive/Index.html">Enter the archive <span aria-hidden="true">↗</span></a>
+    <nav class="top-actions" aria-label="Homepage actions">
+      <button class="music-toggle" id="music-toggle" type="button" aria-pressed="false" aria-label="Play royal background music"><span class="music-icon" aria-hidden="true">♫</span><span class="music-label">Royal music</span></button>
+      <a class="top-link" href="Archive/Index.html">Enter the archive <span aria-hidden="true">↗</span></a>
+    </nav>
   </header>
 
   <main class="hero">
@@ -36,5 +40,6 @@
     <span class="footer-dot">·</span>
     <a href="Archive/Index.html">The archive</a>
   </footer>
+  <script src="site.js"></script>
 </body>
 </html>
