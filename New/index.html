@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tanya’s Kingdom</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#f6efe0;font:16px/1.5 system-ui,sans-serif;touch-action:none;user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 10px);font-size:12px;opacity:.75;white-space:pre;text-shadow:0 1px 3px #000}
+#start{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,8,25,.82);text-align:center;padding:24px;z-index:5}
+#start h1{font:600 2.4rem Georgia,serif;margin:0 0 8px}
+#start button{font:600 1.1rem system-ui;border:0;border-radius:999px;padding:14px 34px;background:#f2cf84;color:#0b1030;margin-top:18px;cursor:pointer}
+#pad{position:fixed;left:calc(env(safe-area-inset-left,0px) + 24px);bottom:calc(env(safe-area-inset-bottom,0px) + 24px);width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);display:none}
+#knob{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(242,207,132,.85)}
+@media(pointer:coarse){#pad{display:block}}
+</style>
+</head>
+<body>
+<div id="hud"></div>
+<div id="pad"><div id="knob"></div></div>
+<div id="start"><h1>Tanya’s Kingdom</h1><p id="msg">Loading the sky…</p><p style="opacity:.7;max-width:34ch">WASD to walk, Shift to run, mouse to look.<br>On a phone: left stick to walk, drag the right side to look.</p><button id="go" disabled>Enter</button></div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
